@@ -16,6 +16,12 @@ https://tilta.com/feed/
 https://kinoflo.com/feed/
 https://www.portkeys.com/feed/
 https://coreswx.com/blogs/news.atom
+https://www.venuslens.net/feed/
+https://www.hollyland.com/news/feed/
+https://deitymic.com/feed/
+https://www.litepanels.com/en/feed/
+https://www.chapman-leonard.com/feed/
+https://www.thinktankphoto.com/blogs/news-events.atom
 
 # Выставки и индустрия
 https://www.tvtechnology.com/feeds/tag/nab-show
