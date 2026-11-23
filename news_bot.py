@@ -37,7 +37,7 @@ GEMINI_MODELS = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL, "gemini-flash-latest"]
 MAX_FAILS = 3  # сколько раз пробовать статью, если Gemini недоступен
 
 MAX_AGE_HOURS = int(os.environ.get("MAX_AGE_HOURS", "36"))       # статьи старше не берём
-MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "3"))  # постов за один запуск
+MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "5"))  # постов за один запуск
 HISTORY_DAYS = int(os.environ.get("HISTORY_DAYS", "5"))           # сколько дней помнить темы
 POST_INTERVAL_SEC = int(os.environ.get("POST_INTERVAL_SEC", "300"))  # пауза между постами (5 минут)
 
