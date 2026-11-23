@@ -37,6 +37,7 @@ GEMINI_FALLBACK_MODEL = os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-flash-li
 MAX_AGE_HOURS = int(os.environ.get("MAX_AGE_HOURS", "36"))       # статьи старше не берём
 MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "3"))  # постов за один запуск
 HISTORY_DAYS = int(os.environ.get("HISTORY_DAYS", "5"))           # сколько дней помнить темы
+POST_INTERVAL_SEC = int(os.environ.get("POST_INTERVAL_SEC", "300"))  # пауза между постами (5 минут)
 
 SOURCES_FILE = "sources.txt"
 STATE_FILE = "state.json"
@@ -362,7 +363,13 @@ def main():
         try:
             text, image = fetch_article(c)
             title, body = make_post(c, text)
+            # пауза между постами (в том числе между запусками)
+            wait_left = POST_INTERVAL_SEC - (time.time() - state.get("last_post_ts", 0))
+            if wait_left > 0:
+                log(f"[..] Жду {int(wait_left)} c до следующего поста")
+                time.sleep(wait_left)
             publish(title, body, image)
+            state["last_post_ts"] = time.time()
             log(f"[+] Опубликовано: {title}  ({c['source']})")
             state["posted"].append({"title": title, "text": body,
                                     "source": c["source"], "ts": NOW.isoformat()})
@@ -371,8 +378,6 @@ def main():
         # отмечаем в любом случае, чтобы проблемная статья не зациклилась
         state["seen"][c["url"]] = NOW.isoformat()
         save_state(state)
-        if n < len(to_post) - 1:
-            time.sleep(10)
 
 
 if __name__ == "__main__":
