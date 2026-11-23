@@ -7,3 +7,7 @@ https://www.cined.com/feed/
 https://www.newsshooter.com/feed/
 https://nofilmschool.com/feed/
 https://www.provideocoalition.com/feed/
+
+# Производители
+https://sony-cinematography.com/feeds/article-feed.xml
+https://www.nikon.com/company/rss/feeds/imaging.rss
