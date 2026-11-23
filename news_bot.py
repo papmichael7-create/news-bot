@@ -122,7 +122,12 @@ def collect_candidates(state):
     cutoff = NOW - timedelta(hours=MAX_AGE_HOURS)
     for feed_url in read_sources():
         try:
-            feed = feedparser.parse(http_get(feed_url).content)
+            raw = http_get(feed_url).content
+            try:
+                raw.decode("utf-8")
+            except UnicodeDecodeError:
+                raw = raw.decode("cp1251").encode("utf-8")  # русские сайты в старой кодировке
+            feed = feedparser.parse(raw)
         except Exception as e:
             log(f"[!] Лента недоступна: {feed_url} — {e}")
             continue
@@ -216,7 +221,7 @@ SELECT_PROMPT = """Ты редактор Telegram-канала новостей 
 для профессионалов камерного цеха (камеры, объективы, свет, грип, постпродакшн,
 новости индустрии кино и видео).
 
-Ниже список НОВЫХ статей из разных англоязычных источников и список тем,
+Ниже список НОВЫХ статей из разных источников (английских и русских) и список тем,
 которые канал УЖЕ опубликовал за последние дни.
 
 Задача:
@@ -228,11 +233,14 @@ SELECT_PROMPT = """Ты редактор Telegram-канала новостей 
    анонсы эпизодов подкастов и материалы, не связанные с кино/видео.
 4. Оставляй только то, что связано со съёмкой: камеры, объективы и оптика для
    съёмки, свет, грип, стабилизаторы, мониторы, звук для съёмок, постпродакшн,
-   съёмки фильмов и сериалов. Новости производителей о другой продукции
+   операторские краны и телескопические краны, тележки и рельсы, аккумуляторы
+   и питание для съёмочной техники, сумки и кейсы для техники, фильтры,
+   экшн-камеры и 360-камеры, съёмки фильмов и сериалов. Новости производителей о другой продукции
    (бинокли, микроскопы, прицелы, принтеры, медицинская и промышленная техника,
    финансовые отчёты компаний) — убирай.
 5. Новости отраслевых выставок по всему миру (NAB, IBC, Cine Gear, BSC Expo,
-   Camerimage, Inter BEE, BIRTV, CP+, Prolight + Sound и т.п.): анонсы, премьеры
+   Camerimage, Inter BEE, BIRTV, CP+, Prolight + Sound, а также российские CPS,
+   CSTB.PRO.MEDIA, NATEXPO, ProIntegration Tech и т.п.): анонсы, премьеры
    техники, итоги — оставляй, если они про кино, видео, фото, свет или звук.
 Обзоры, тесты, интервью и разборы по теме канала оставляй.
 
@@ -268,8 +276,9 @@ def fetch_article(c):
     """Полный текст статьи и картинка. Если сайт не пускает — берём текст из RSS."""
     text, image = "", c["image"]
     try:
-        page = http_get(c["link"]).text
-        text = trafilatura.extract(page, include_comments=False, include_tables=False) or ""
+        page_bytes = http_get(c["link"]).content
+        text = trafilatura.extract(page_bytes, include_comments=False, include_tables=False) or ""
+        page = page_bytes.decode("utf-8", errors="ignore")
         if not image:
             m = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)', page) \
                 or re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image', page)
