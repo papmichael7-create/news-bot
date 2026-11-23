@@ -12,7 +12,6 @@ https://www.provideocoalition.com/feed/
 https://sony-cinematography.com/feeds/article-feed.xml
 https://www.nikon.com/company/rss/feeds/imaging.rss
 https://www.blackmagicdesign.com/rss
-https://www.angenieux.com/feed/
 https://tilta.com/feed/
 https://kinoflo.com/feed/
 https://www.portkeys.com/feed/
