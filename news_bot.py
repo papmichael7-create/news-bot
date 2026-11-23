@@ -39,7 +39,8 @@ MAX_FAILS = 3  # сколько раз пробовать статью, если
 MAX_AGE_HOURS = int(os.environ.get("MAX_AGE_HOURS", "36"))       # статьи старше не берём
 MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "5"))  # постов за один запуск
 HISTORY_DAYS = int(os.environ.get("HISTORY_DAYS", "5"))           # сколько дней помнить темы
-POST_INTERVAL_SEC = int(os.environ.get("POST_INTERVAL_SEC", "300"))  # пауза между постами (5 минут)
+POST_INTERVAL_SEC = int(os.environ.get("POST_INTERVAL_SEC", "300"))  # минимальная пауза между постами (5 минут)
+SPREAD_WINDOW_SEC = int(os.environ.get("SPREAD_WINDOW_SEC", "4800"))  # растягиваем посты запуска на ~80 минут
 
 SOURCES_FILE = "sources.txt"
 STATE_FILE = "state.json"
@@ -386,13 +387,20 @@ def main():
             state["seen"][c["url"]] = NOW.isoformat()
     save_state(state)
 
+    # равномерно распределяем посты по интервалу до следующего запуска (1,5 часа)
+    spacing = POST_INTERVAL_SEC
+    if len(to_post) > 1:
+        spacing = max(POST_INTERVAL_SEC, SPREAD_WINDOW_SEC // len(to_post))
+    log(f"Постов в этом запуске: {len(to_post)}, интервал между ними ~{spacing // 60} мин")
+
     for n, i in enumerate(to_post):
         c = candidates[i]
         try:
             text, image = fetch_article(c)
             title, body = make_post(c, text)
             # пауза между постами (в том числе между запусками)
-            wait_left = POST_INTERVAL_SEC - (time.time() - state.get("last_post_ts", 0))
+            gap = POST_INTERVAL_SEC if n == 0 else spacing
+            wait_left = gap - (time.time() - state.get("last_post_ts", 0))
             if wait_left > 0:
                 log(f"[..] Жду {int(wait_left)} c до следующего поста")
                 time.sleep(wait_left)
