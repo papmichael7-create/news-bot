@@ -168,15 +168,21 @@ def gemini_json(prompt):
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         for attempt in range(4):
             try:
-                r = requests.post(url, json=body, timeout=120,
+                r = requests.post(url, json=body, timeout=60,
                                   headers={"x-goog-api-key": GEMINI_KEY})
             except requests.RequestException as e:
                 last_error = e
-                time.sleep(10)
+                if attempt >= 1:
+                    log(f"[..] Gemini {model} не отвечает, переключаюсь на запасную модель")
+                    break
+                time.sleep(5)
                 continue
             if r.status_code == 429 or r.status_code >= 500:
                 last_error = f"{r.status_code} {r.text[:200]}"
-                wait = 20 * (attempt + 1)
+                if r.status_code >= 500 and attempt >= 1:
+                    log(f"[..] Gemini {model} перегружен, переключаюсь на запасную модель")
+                    break
+                wait = 15 * (attempt + 1)
                 log(f"[..] Gemini {model}: {r.status_code}, жду {wait} c")
                 time.sleep(wait)
                 continue
