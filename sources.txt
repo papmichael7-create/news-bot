@@ -15,8 +15,14 @@ https://www.blackmagicdesign.com/rss
 https://www.angenieux.com/feed/
 https://tilta.com/feed/
 https://kinoflo.com/feed/
+https://www.portkeys.com/feed/
+https://coreswx.com/blogs/news.atom
 
 # Выставки и индустрия
 https://www.tvtechnology.com/feeds/tag/nab-show
 https://www.tvtechnology.com/feeds/tag/ibc-show
 https://britishcinematographer.co.uk/feed/
+
+# Российские выставки (CPS, CSTB.PRO.MEDIA, ProIntegration Tech)
+https://www.sostav.ru/blogsWebServices/blog/272399.xml
+https://www.sostav.ru/blogsWebServices/blog/271142.xml
