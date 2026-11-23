@@ -2,7 +2,9 @@ name: News bot
 
 on:
   schedule:
-    - cron: "*/15 * * * *"   # каждые 15 минут
+    # каждые 1,5 часа (время UTC; основной запуск делает cron-job.org)
+    - cron: "0 0-21/3 * * *"
+    - cron: "30 1-22/3 * * *"
   workflow_dispatch:          # кнопка ручного запуска
 
 permissions:
@@ -15,7 +17,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
