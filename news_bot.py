@@ -31,9 +31,9 @@ import trafilatura
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 CHANNEL = os.environ.get("TELEGRAM_CHANNEL", "@newsfrom1AC")
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
-GEMINI_FALLBACK_MODEL = os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-flash-lite-latest")
-GEMINI_MODELS = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL, "gemini-2.5-flash-lite"]
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-lite-latest")
+GEMINI_FALLBACK_MODEL = os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-2.5-flash-lite")
+GEMINI_MODELS = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL, "gemini-flash-latest"]
 MAX_FAILS = 3  # сколько раз пробовать статью, если Gemini недоступен
 
 MAX_AGE_HOURS = int(os.environ.get("MAX_AGE_HOURS", "36"))       # статьи старше не берём
@@ -187,8 +187,15 @@ def gemini_json(prompt):
                     break
                 time.sleep(5)
                 continue
+            if r.status_code == 429 and "PerDay" in r.text:
+                last_error = f"{r.status_code} {r.text[:200]}"
+                log(f"[..] Gemini {model}: дневной лимит исчерпан, беру другую модель")
+                break
             if r.status_code == 429 or r.status_code >= 500:
                 last_error = f"{r.status_code} {r.text[:200]}"
+                if attempt >= 2:
+                    log(f"[..] Gemini {model} не отвечает, переключаюсь на запасную модель")
+                    break
                 if r.status_code >= 500 and attempt >= 1:
                     log(f"[..] Gemini {model} перегружен, переключаюсь на запасную модель")
                     break
