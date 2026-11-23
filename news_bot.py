@@ -33,6 +33,8 @@ CHANNEL = os.environ.get("TELEGRAM_CHANNEL", "@newsfrom1AC")
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
 GEMINI_FALLBACK_MODEL = os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-flash-lite-latest")
+GEMINI_MODELS = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL, "gemini-2.5-flash-lite"]
+MAX_FAILS = 3  # сколько раз пробовать статью, если Gemini недоступен
 
 MAX_AGE_HOURS = int(os.environ.get("MAX_AGE_HOURS", "36"))       # статьи старше не берём
 MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "3"))  # постов за один запуск
@@ -60,6 +62,7 @@ def load_state():
         state = {}
     state.setdefault("seen", {})    # url -> время, когда увидели
     state.setdefault("posted", [])  # [{title, text, source, ts}]
+    state.setdefault("fails", {})   # url -> сколько раз не удалось обработать
     return state
 
 
@@ -69,6 +72,7 @@ def save_state(state):
     state["seen"] = {u: t for u, t in state["seen"].items() if t >= seen_cutoff}
     hist_cutoff = (NOW - timedelta(days=HISTORY_DAYS)).isoformat()
     state["posted"] = [p for p in state["posted"] if p["ts"] >= hist_cutoff]
+    state["fails"] = {u: n for u, n in state.get("fails", {}).items() if u not in state["seen"]}
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=1)
 
@@ -170,7 +174,7 @@ def gemini_json(prompt):
         "generationConfig": {"responseMimeType": "application/json", "temperature": 0.4},
     }
     last_error = None
-    for model in (GEMINI_MODEL, GEMINI_FALLBACK_MODEL):
+    for model in GEMINI_MODELS:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         for attempt in range(4):
             try:
@@ -358,7 +362,12 @@ def main():
         save_state(state)
         return
 
-    selected = select_unique(candidates, state)
+    try:
+        selected = select_unique(candidates, state)
+    except Exception as e:
+        log(f"[!] Gemini недоступен, попробую в следующий запуск: {e}")
+        save_state(state)
+        return
     log(f"Новых статей: {len(candidates)}, после отбора и удаления дублей: {len(selected)}")
 
     to_post = selected[:MAX_POSTS_PER_RUN]
@@ -385,10 +394,13 @@ def main():
             log(f"[+] Опубликовано: {title}  ({c['source']})")
             state["posted"].append({"title": title, "text": body,
                                     "source": c["source"], "ts": NOW.isoformat()})
+            state["seen"][c["url"]] = NOW.isoformat()
         except Exception as e:
-            log(f"[!] Ошибка со статьёй {c['link']}: {e}")
-        # отмечаем в любом случае, чтобы проблемная статья не зациклилась
-        state["seen"][c["url"]] = NOW.isoformat()
+            fails = state["fails"].get(c["url"], 0) + 1
+            state["fails"][c["url"]] = fails
+            log(f"[!] Ошибка со статьёй {c['link']} (попытка {fails} из {MAX_FAILS}): {e}")
+            if fails >= MAX_FAILS:
+                state["seen"][c["url"]] = NOW.isoformat()  # больше не пробуем
         save_state(state)
 
 
