@@ -1,0 +1,9 @@
+# RSS-ленты источников. Одна ссылка на строку.
+# Чтобы добавить источник, впишите адрес его RSS-ленты новой строкой.
+# Строки, начинающиеся с #, не читаются.
+
+https://ymcinema.com/feed/
+https://www.cined.com/feed/
+https://www.newsshooter.com/feed/
+https://nofilmschool.com/feed/
+https://www.provideocoalition.com/feed/
