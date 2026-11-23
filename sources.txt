@@ -11,6 +11,10 @@ https://www.provideocoalition.com/feed/
 # Производители
 https://sony-cinematography.com/feeds/article-feed.xml
 https://www.nikon.com/company/rss/feeds/imaging.rss
+https://www.blackmagicdesign.com/rss
+https://www.angenieux.com/feed/
+https://tilta.com/feed/
+https://kinoflo.com/feed/
 
 # Выставки и индустрия
 https://www.tvtechnology.com/feeds/tag/nab-show
