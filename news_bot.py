@@ -18,6 +18,7 @@ import html
 import json
 import os
 import re
+import subprocess
 import sys
 import time
 from datetime import datetime, timedelta, timezone
@@ -76,6 +77,127 @@ def save_state(state):
     state["fails"] = {u: n for u, n in state.get("fails", {}).items() if u not in state["seen"]}
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=1)
+
+
+# ---------- Синхронизация памяти с GitHub ----------
+# Память (state.json) сохраняется в репозиторий сразу после каждого поста,
+# а перед публикацией сверяется с последней сохранённой версией.
+# Так одна и та же новость не выйдет дважды, даже если запуск оборвётся.
+IN_ACTIONS = bool(os.environ.get("GITHUB_ACTIONS"))
+
+
+def git(*args):
+    return subprocess.run(["git", "-c", "user.name=news-bot",
+                           "-c", "user.email=news-bot@users.noreply.github.com", *args],
+                          capture_output=True, text=True)
+
+
+def merge_state(a, b):
+    """Объединяет две версии памяти, ничего не теряя."""
+    seen = dict(b.get("seen", {}))
+    for u, t in a.get("seen", {}).items():
+        seen[u] = max(t, seen.get(u, t))
+    posted, keys = [], set()
+    for p in b.get("posted", []) + a.get("posted", []):
+        k = (p.get("orig") or p.get("title"), p.get("source"))
+        if k not in keys:
+            keys.add(k)
+            posted.append(p)
+    fails = dict(b.get("fails", {}))
+    for u, n in a.get("fails", {}).items():
+        fails[u] = max(n, fails.get(u, 0))
+    return {"seen": seen, "posted": posted, "fails": fails,
+            "last_post_ts": max(a.get("last_post_ts", 0), b.get("last_post_ts", 0))}
+
+
+def remote_state():
+    if git("fetch", "-q", "origin", "main").returncode != 0:
+        return None
+    r = git("show", "origin/main:" + STATE_FILE)
+    if r.returncode != 0:
+        return {}
+    try:
+        return json.loads(r.stdout)
+    except json.JSONDecodeError:
+        return {}
+
+
+def sync_state(state):
+    """Подтягивает свежую память из репозитория (её мог обновить другой запуск)."""
+    if not IN_ACTIONS:
+        return
+    remote = remote_state()
+    if remote:
+        merged = merge_state(state, remote)
+        state.clear()
+        state.update(merged)
+
+
+def push_state(state):
+    """Сохраняет память локально и сразу отправляет её в репозиторий."""
+    save_state(state)
+    if not IN_ACTIONS:
+        return
+    for attempt in range(4):
+        remote = remote_state()
+        if remote is None:
+            time.sleep(3)
+            continue
+        merged = merge_state(state, remote)
+        state.clear()
+        state.update(merged)
+        git("reset", "-q", "--hard", "origin/main")
+        save_state(state)
+        git("add", STATE_FILE)
+        if git("diff", "--cached", "--quiet").returncode == 0:
+            return
+        git("commit", "-q", "-m", "update state")
+        if git("push", "-q", "origin", "HEAD:main").returncode == 0:
+            return
+        time.sleep(3)
+    log("[!] Не удалось сохранить память в репозиторий")
+
+
+# ---------- Проверка дублей в коде ----------
+GENERIC = set("""a an the and or for with to of in on at by from new now is are its it this that
+your how why what all more than after as up out into about vs via
+announced announces announcing announce introduced introduces introducing introduce
+launched launches launching launch released releases releasing release unveiled unveils unveil
+update updated updates version firmware camera cameras lens lenses review hands-on first look
+video cinema plugin plug-in available free sale deal deals black friday now officially
+""".split())
+BRANDS = set("""nikon sony canon arri red blackmagic dji panasonic fujifilm fuji leica zeiss cooke
+sigma tamron laowa aputure amaran nanlite nanlux godox tilta smallrig atomos teradek hollyland
+rode deity sennheiser gopro insta360 apple adobe avid davinci resolve kino flo litepanels
+""".split())
+
+
+def key_tokens(text):
+    toks = set()
+    for w in re.findall(r"[A-Za-z0-9][A-Za-z0-9.\-+]*", text or ""):
+        w = w.lower().strip(".-")
+        if re.fullmatch(r"\d+(\.\d+)?", w):
+            w = w.rstrip("0").rstrip(".") if "." in w else w
+        if w in GENERIC or (len(w) < 2 and not w.isdigit()):
+            continue
+        toks.add(w)
+    return toks
+
+
+def is_duplicate(tokens, others):
+    """Совпадают ли ключевые названия (бренд, модель, версия) с уже опубликованным."""
+    for o in others:
+        common = tokens & o
+        # должно совпасть хотя бы одно «имя» (модель, продукт), а не только бренд и цифры
+        names = [w for w in common if w not in BRANDS and not re.fullmatch(r"[\d.]+", w)]
+        if names and len(common) >= 2 and len(common) >= 0.6 * min(len(tokens), len(o)):
+            return True
+    return False
+
+
+def posted_tokens(state):
+    return [key_tokens(p.get("orig", "")) | key_tokens(p.get("title", ""))
+            for p in state["posted"]]
 
 
 # ---------- Утилиты ----------
@@ -364,18 +486,31 @@ def main():
         sys.exit(1)
 
     state = load_state()
+    sync_state(state)
     candidates = collect_candidates(state)
     if not candidates:
         log("Новых статей нет")
-        save_state(state)
+        push_state(state)
         return
 
     try:
         selected = select_unique(candidates, state)
     except Exception as e:
         log(f"[!] Gemini недоступен, попробую в следующий запуск: {e}")
-        save_state(state)
+        push_state(state)
         return
+
+    # вторая проверка дублей — в коде, по ключевым названиям
+    known = posted_tokens(state)
+    unique = []
+    for i in selected:
+        t = key_tokens(candidates[i]["title"])
+        if is_duplicate(t, known):
+            log(f"[=] Дубль, пропускаю: {candidates[i]['title']}")
+            continue
+        unique.append(i)
+        known.append(t)
+    selected = unique
     log(f"Новых статей: {len(candidates)}, после отбора и удаления дублей: {len(selected)}")
 
     to_post = selected[:MAX_POSTS_PER_RUN]
@@ -385,7 +520,7 @@ def main():
     for i, c in enumerate(candidates):
         if i not in to_post and i not in postponed:
             state["seen"][c["url"]] = NOW.isoformat()
-    save_state(state)
+    push_state(state)
 
     # равномерно распределяем посты по интервалу до следующего запуска (1,5 часа)
     spacing = POST_INTERVAL_SEC
@@ -404,11 +539,20 @@ def main():
             if wait_left > 0:
                 log(f"[..] Жду {int(wait_left)} c до следующего поста")
                 time.sleep(wait_left)
+            # перед публикацией сверяемся со свежей памятью
+            sync_state(state)
+            t = key_tokens(c["title"])
+            if c["url"] in state["seen"] or is_duplicate(t, posted_tokens(state)):
+                log(f"[=] Уже опубликовано, пропускаю: {c['title']}")
+                state["seen"][c["url"]] = NOW.isoformat()
+                push_state(state)
+                continue
             publish(title, body, image)
             state["last_post_ts"] = time.time()
             log(f"[+] Опубликовано: {title}  ({c['source']})")
-            state["posted"].append({"title": title, "text": body,
-                                    "source": c["source"], "ts": NOW.isoformat()})
+            state["posted"].append({"title": title, "text": body, "orig": c["title"],
+                                    "source": c["source"],
+                                    "ts": datetime.now(timezone.utc).isoformat()})
             state["seen"][c["url"]] = NOW.isoformat()
         except Exception as e:
             fails = state["fails"].get(c["url"], 0) + 1
@@ -416,7 +560,7 @@ def main():
             log(f"[!] Ошибка со статьёй {c['link']} (попытка {fails} из {MAX_FAILS}): {e}")
             if fails >= MAX_FAILS:
                 state["seen"][c["url"]] = NOW.isoformat()  # больше не пробуем
-        save_state(state)
+        push_state(state)
 
 
 if __name__ == "__main__":
