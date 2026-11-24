@@ -48,7 +48,8 @@
   "https://britishcinematographer.co.uk/storage-2": "2026-11-24T10:06:09.062341+00:00",
   "https://britishcinematographer.co.uk/in-photos-a-celebration-of-cinematography-2026": "2026-11-24T12:01:08.640838+00:00",
   "https://www.cined.com/honor-magic9-pro-max-global-rollout-begins-arri-logc3-apv-10-bit-422-dual-200mp-cameras": "2026-11-24T12:01:08.640838+00:00",
-  "https://www.newsshooter.com/2026/11/24/arri-2026-clearance-sale": "2026-11-24T13:30:47.772164+00:00"
+  "https://www.newsshooter.com/2026/11/24/arri-2026-clearance-sale": "2026-11-24T13:30:47.772164+00:00",
+  "https://www.provideocoalition.com/tool-tip-tuesday-for-adobe-premiere-creating-groups-in-color-mode": "2026-11-24T13:30:47.772164+00:00"
  },
  "posted": [
   {
@@ -123,10 +124,17 @@
    "orig": "HONOR Magic9 Pro Max Global Rollout Begins – ARRI LogC3, APV 10-Bit 4:2:2, Dual 200MP Cameras",
    "source": "CineD",
    "ts": "2026-11-24T12:01:59.638274+00:00"
+  },
+  {
+   "title": "Работа с группами клипов в Color Mode в Adobe Premiere",
+   "text": "В обновленном цветовом пространстве Color Mode в Adobe Premiere появилась возможность применять грейдинг сразу к группе клипов вместо использования корректирующих слоев. Функция позволяет объединять фрагменты в группы и настраивать их одновременно, что дает большую гибкость при работе с таймлайном на нелинейном монтаже. Дополнительно сетку клипов можно сортировать по различным параметрам для быстрого объединения кадров из одинаковых съемочных сетапов.",
+   "orig": "Tool Tip Tuesday for Adobe Premiere: Creating Groups in Color Mode",
+   "source": "ProVideo Coalition",
+   "ts": "2026-11-24T13:32:46.943623+00:00"
   }
  ],
  "fails": {
   "https://www.newsshooter.com/2026/11/24/cinetwin-1-0-a-visualizer-and-digital-twin-for-film-still-photo-productions": 1
  },
- "last_post_ts": 1795521719.6382496
+ "last_post_ts": 1795527166.9435961
 }
