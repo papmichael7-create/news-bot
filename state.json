@@ -41,7 +41,9 @@
   "https://www.newsshooter.com/2026/11/23/pelican-vault-v525-rolling-case-with-padded-dividers-gray-25l-on-sale-for-99-95-usd": "2026-11-24T05:28:54.763715+00:00",
   "https://www.newsshooter.com/2026/11/23/arri-reference-tool-viewer-version-0-10-0": "2026-11-24T07:10:45.515151+00:00",
   "https://www.newsshooter.com/2026/11/23/canon-eos-c300-mark-iii-digital-cinema-camera-body-ef-lens-mount-on-sale-for-2999-usd-2": "2026-11-24T07:30:45.164561+00:00",
-  "https://ymcinema.com/2026/11/24/fujifilm-gfx-eterna-55-imax-camera-under-10000": "2026-11-24T07:30:45.164561+00:00"
+  "https://ymcinema.com/2026/11/24/fujifilm-gfx-eterna-55-imax-camera-under-10000": "2026-11-24T07:30:45.164561+00:00",
+  "https://www.cined.com/nikon-zr-firmware-2-00-now-available-log3g10-in-h-265-selectable-high-iso-nr-and-3d-lut-over-hdmi": "2026-11-24T08:40:08.527476+00:00",
+  "https://www.newsshooter.com/2026/11/23/cinemalab-1-0-a-film-laboratory-simulator-for-resolve-final-cut-pro-after-effects-premiere-pro": "2026-11-24T08:40:08.527476+00:00"
  },
  "posted": [
   {
@@ -91,8 +93,20 @@
    "text": "Компания ARRI выпустила обновление 0.10.0 для программы ARRI Reference Tool Viewer. В новой версии появились навигатор по изображению, пипетка для проверки значений пикселей, поддержка маскирования пикселей, масштабирование ProRes-клипов и просмотр отдельных RGB-каналов. Программа совместима с материалом с камер ALEXA 35, ALEXA Mini LF, AMIRA и других моделей линейки.",
    "source": "Newsshooter",
    "ts": "2026-11-24T07:10:45.515151+00:00"
+  },
+  {
+   "title": "Вышло обновление прошивки версии 2.00 для полнокадровой камеры Nikon ZR",
+   "text": "Компания Nikon выпустила бесплатное обновление прошивки версии 2.00 для полнокадровой кинокамеры Nikon ZR. Новая прошивка добавляет поддержку профиля RED Log3G10 для записи в H.265, настраиваемое шумоподавление для высоких значений ISO, а также вывод 3D LUT через HDMI. Кроме того, обновление расширяет возможности назначения элементов управления на корпусе камеры.",
+   "source": "CineD",
+   "ts": "2026-11-24T08:40:08.527476+00:00"
+  },
+  {
+   "title": "Вышел плагин CinemaLAB 1.0 для эмуляции кинолаборатории",
+   "text": "Созданный Ником Дрифтвудом инструмент CinemaLAB 1.0 имитирует полный процесс работы пленочной лаборатории и доступен для DaVinci Resolve, Final Cut Pro, After Effects и Premiere Pro на Mac и Windows. Плагин включает 413 смоделированных вариантов пленок и функцию Match LUT для восстановления и конвертации существующих .cube LUT. Стоимость бессрочной лицензии составляет 199 долларов США при временной скидке 125 долларов в первый месяц.",
+   "source": "Newsshooter",
+   "ts": "2026-11-24T08:40:08.527476+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795504275.1892004
+ "last_post_ts": 1795512042.260213
 }
