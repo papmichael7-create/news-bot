@@ -46,7 +46,8 @@
   "https://www.newsshooter.com/2026/11/23/cinemalab-1-0-a-film-laboratory-simulator-for-resolve-final-cut-pro-after-effects-premiere-pro": "2026-11-24T08:40:08.527476+00:00",
   "https://britishcinematographer.co.uk/stockholm-international-film-festival-audience-award-club-kid": "2026-11-24T10:06:09.062341+00:00",
   "https://britishcinematographer.co.uk/storage-2": "2026-11-24T10:06:09.062341+00:00",
-  "https://britishcinematographer.co.uk/in-photos-a-celebration-of-cinematography-2026": "2026-11-24T12:01:08.640838+00:00"
+  "https://britishcinematographer.co.uk/in-photos-a-celebration-of-cinematography-2026": "2026-11-24T12:01:08.640838+00:00",
+  "https://www.cined.com/honor-magic9-pro-max-global-rollout-begins-arri-logc3-apv-10-bit-422-dual-200mp-cameras": "2026-11-24T12:01:08.640838+00:00"
  },
  "posted": [
   {
@@ -114,8 +115,15 @@
    "text": "Рост цен на жесткие диски и SSD, вызванный спросом со стороны дата-центров и систем искусственного интеллекта, создает серьезную нагрузку на бюджеты кинопроизводств. Стоимость высокоемких HDD объемом от 30TB теперь часто превышает 1000 долларов, а компании вроде Digital Orchard фиксируют рост цен на сканирование и накопители на 40-70% за последние два года. Проблемы с бюджетами заставляют независимые проекты и документалистов переходить на более низкие разрешения, уменьшать объемы данных и тщательнее планировать стратегии резервного копирования.",
    "source": "British Cinematographer",
    "ts": "2026-11-24T10:06:09.062341+00:00"
+  },
+  {
+   "title": "HONOR начинает глобальный выпуск смартфона Magic9 Pro Max с поддержкой ARRI LogC3",
+   "text": "Компания HONOR объявила о международном запуске флагманского смартфона Magic9 Pro Max, созданного в техническом партнерстве с ARRI. Устройство получило выделенный ARRI CINEMA Mode с возможностью записи видео в формате 4K до 60 кадров в секунду с использованием профиля ARRI LogC3 и кодека APV 10-bit 4:2:2. Модель оснащена сдвоенной основной камерой с сенсорами на 200 мегапикселей и процессором обработки изображений HONOR Imaging Chip H1. В Малайзии новинка в конфигурации с 12 ГБ оперативной и 512 ГБ встроенной памяти поступила в продажу по цене около 1460 долларов США, а предварительные заказы продлятся до 3 декабря 2026 года.",
+   "orig": "HONOR Magic9 Pro Max Global Rollout Begins – ARRI LogC3, APV 10-Bit 4:2:2, Dual 200MP Cameras",
+   "source": "CineD",
+   "ts": "2026-11-24T12:01:59.638274+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795514795.4898424
+ "last_post_ts": 1795521719.6382496
 }
