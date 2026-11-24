@@ -38,7 +38,8 @@
   "https://nofilmschool.com/autumn-symbolism-queer-cinema": "2026-11-24T01:02:18.381037+00:00",
   "https://www.newsshooter.com/2026/11/23/nikon-zr-firmware-version-2-00-now-available-to-download": "2026-11-24T04:30:40.945884+00:00",
   "https://www.newsshooter.com/2026/11/23/save-4950-usd-on-the-blackmagic-design-8tb-cloud-store-mini-4-x-2tb": "2026-11-24T05:28:54.763715+00:00",
-  "https://www.newsshooter.com/2026/11/23/pelican-vault-v525-rolling-case-with-padded-dividers-gray-25l-on-sale-for-99-95-usd": "2026-11-24T05:28:54.763715+00:00"
+  "https://www.newsshooter.com/2026/11/23/pelican-vault-v525-rolling-case-with-padded-dividers-gray-25l-on-sale-for-99-95-usd": "2026-11-24T05:28:54.763715+00:00",
+  "https://www.newsshooter.com/2026/11/23/arri-reference-tool-viewer-version-0-10-0": "2026-11-24T07:10:45.515151+00:00"
  },
  "posted": [
   {
@@ -82,8 +83,14 @@
    "text": "Компания FUJIFILM выпустила в продажу версию кинокамеры FUJIFILM GFX ETERNA 55 в комплектации только с корпусом за 9999 долларов США. Новинка оснащена средним форматом сенсора 102 мегапикселя, байонетами FUJIFILM G и ARRI PL, а также поддерживает внутреннюю запись в ProRes 422 HQ. Заказ устройства доступен у дистрибьюторов по предзаказу.",
    "source": "Newsshooter",
    "ts": "2026-11-23T23:17:56.251146+00:00"
+  },
+  {
+   "title": "Вышло обновление ARRI Reference Tool Viewer 0.10.0",
+   "text": "Компания ARRI выпустила обновление 0.10.0 для программы ARRI Reference Tool Viewer. В новой версии появились навигатор по изображению, пипетка для проверки значений пикселей, поддержка маскирования пикселей, масштабирование ProRes-клипов и просмотр отдельных RGB-каналов. Программа совместима с материалом с камер ALEXA 35, ALEXA Mini LF, AMIRA и других моделей линейки.",
+   "source": "Newsshooter",
+   "ts": "2026-11-24T07:10:45.515151+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795475926.1978216
+ "last_post_ts": 1795504275.1892004
 }
