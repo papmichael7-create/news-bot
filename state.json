@@ -43,7 +43,9 @@
   "https://www.newsshooter.com/2026/11/23/canon-eos-c300-mark-iii-digital-cinema-camera-body-ef-lens-mount-on-sale-for-2999-usd-2": "2026-11-24T07:30:45.164561+00:00",
   "https://ymcinema.com/2026/11/24/fujifilm-gfx-eterna-55-imax-camera-under-10000": "2026-11-24T07:30:45.164561+00:00",
   "https://www.cined.com/nikon-zr-firmware-2-00-now-available-log3g10-in-h-265-selectable-high-iso-nr-and-3d-lut-over-hdmi": "2026-11-24T08:40:08.527476+00:00",
-  "https://www.newsshooter.com/2026/11/23/cinemalab-1-0-a-film-laboratory-simulator-for-resolve-final-cut-pro-after-effects-premiere-pro": "2026-11-24T08:40:08.527476+00:00"
+  "https://www.newsshooter.com/2026/11/23/cinemalab-1-0-a-film-laboratory-simulator-for-resolve-final-cut-pro-after-effects-premiere-pro": "2026-11-24T08:40:08.527476+00:00",
+  "https://britishcinematographer.co.uk/stockholm-international-film-festival-audience-award-club-kid": "2026-11-24T10:06:09.062341+00:00",
+  "https://britishcinematographer.co.uk/storage-2": "2026-11-24T10:06:09.062341+00:00"
  },
  "posted": [
   {
@@ -105,8 +107,14 @@
    "text": "Созданный Ником Дрифтвудом инструмент CinemaLAB 1.0 имитирует полный процесс работы пленочной лаборатории и доступен для DaVinci Resolve, Final Cut Pro, After Effects и Premiere Pro на Mac и Windows. Плагин включает 413 смоделированных вариантов пленок и функцию Match LUT для восстановления и конвертации существующих .cube LUT. Стоимость бессрочной лицензии составляет 199 долларов США при временной скидке 125 долларов в первый месяц.",
    "source": "Newsshooter",
    "ts": "2026-11-24T08:40:08.527476+00:00"
+  },
+  {
+   "title": "Кризис стоимости систем хранения данных в кинопроизводстве",
+   "text": "Рост цен на жесткие диски и SSD, вызванный спросом со стороны дата-центров и систем искусственного интеллекта, создает серьезную нагрузку на бюджеты кинопроизводств. Стоимость высокоемких HDD объемом от 30TB теперь часто превышает 1000 долларов, а компании вроде Digital Orchard фиксируют рост цен на сканирование и накопители на 40-70% за последние два года. Проблемы с бюджетами заставляют независимые проекты и документалистов переходить на более низкие разрешения, уменьшать объемы данных и тщательнее планировать стратегии резервного копирования.",
+   "source": "British Cinematographer",
+   "ts": "2026-11-24T10:06:09.062341+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795512042.260213
+ "last_post_ts": 1795514795.4898424
 }
