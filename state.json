@@ -57,7 +57,8 @@
   "https://ymcinema.com/2026/11/23/black-friday-for-sony-the-compact-cinema-line-fx3-is-back-to-its-lowest-price": "2026-11-24T16:30:43.821825+00:00",
   "https://ymcinema.com/2026/11/24/fujifilm-announces-new-pricing-on-its-imax-certified-flagship": "2026-11-24T16:30:43.821825+00:00",
   "https://www.cined.com/soundsnap-joins-mzed-black-friday-2026-3-months-free-550000-royalty-free-sound-effects-and-search-by-tone": "2026-11-24T16:30:43.821825+00:00",
-  "https://nofilmschool.com/best-barbara-eden-movies": "2026-11-24T16:30:43.821825+00:00"
+  "https://nofilmschool.com/best-barbara-eden-movies": "2026-11-24T16:30:43.821825+00:00",
+  "https://www.newsshooter.com/2026/11/24/cinetwin-1-0-a-visualizer-and-digital-twin-for-film-still-photo-productions": "2026-11-24T16:30:43.821825+00:00"
  },
  "posted": [
   {
@@ -146,10 +147,15 @@
    "orig": "André Turpin wins Best Cinematography at British Independent Film Awards for A Long Winter",
    "source": "British Cinematographer",
    "ts": "2026-11-24T15:05:22.073986+00:00"
+  },
+  {
+   "title": "Вышел CineTwin 1.0 для препродакшна",
+   "text": "Разработчик Никлас Густафссон представил CineTwin 1.0, приложение для Mac, позволяющее операторам и гафферам создавать цифровые двойники съемочных площадок. Программа моделирует физические соединения оборудования, работу оптики, освещения и перемещение камер. Стоимость бессрочной лицензии составляет 89 долларов США, также доступен семидневный бесплатный период.",
+   "orig": "CineTwin 1.0– a visualizer and digital twin for film & still photo productions",
+   "source": "Newsshooter",
+   "ts": "2026-11-24T16:31:23.951167+00:00"
   }
  ],
- "fails": {
-  "https://www.newsshooter.com/2026/11/24/cinetwin-1-0-a-visualizer-and-digital-twin-for-film-still-photo-productions": 2
- },
- "last_post_ts": 1795532722.0739639
+ "fails": {},
+ "last_post_ts": 1795537883.9511368
 }
