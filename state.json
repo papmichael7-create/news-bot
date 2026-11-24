@@ -52,7 +52,8 @@
   "https://www.provideocoalition.com/tool-tip-tuesday-for-adobe-premiere-creating-groups-in-color-mode": "2026-11-24T13:30:47.772164+00:00",
   "https://www.cined.com/fujifilm-gfx-eterna-55-body-only-version-for-9999-now-up-for-pre-order-without-monitor-top-handle-and-ac-adapter": "2026-11-24T15:01:01.457586+00:00",
   "https://britishcinematographer.co.uk/british-cinematographer-presents-la-bola-negra-preview": "2026-11-24T15:01:01.457586+00:00",
-  "https://britishcinematographer.co.uk/free-online-counselling-skills-mental-health-first-aid-training": "2026-11-24T15:01:01.457586+00:00"
+  "https://britishcinematographer.co.uk/free-online-counselling-skills-mental-health-first-aid-training": "2026-11-24T15:01:01.457586+00:00",
+  "https://britishcinematographer.co.uk/andre-turpin-wins-best-cinematography-bifas": "2026-11-24T15:01:01.457586+00:00"
  },
  "posted": [
   {
@@ -134,10 +135,17 @@
    "orig": "Tool Tip Tuesday for Adobe Premiere: Creating Groups in Color Mode",
    "source": "ProVideo Coalition",
    "ts": "2026-11-24T13:32:46.943623+00:00"
+  },
+  {
+   "title": "Андре Турпин получил награду за операторскую работу на BIFA",
+   "text": "Оператор Андре Турпин победил в категории Best Cinematography на церемонии British Independent Film Awards за визуальное решение фильма A Long Winter режиссера Эндрю Хэйга. Награда была вручена при поддержке Kodak и Molinare. Победители были объявлены в рамках объявления лауреатов в 10 кинематографических категориях.",
+   "orig": "André Turpin wins Best Cinematography at British Independent Film Awards for A Long Winter",
+   "source": "British Cinematographer",
+   "ts": "2026-11-24T15:05:22.073986+00:00"
   }
  ],
  "fails": {
   "https://www.newsshooter.com/2026/11/24/cinetwin-1-0-a-visualizer-and-digital-twin-for-film-still-photo-productions": 2
  },
- "last_post_ts": 1795527166.9435961
+ "last_post_ts": 1795532722.0739639
 }
