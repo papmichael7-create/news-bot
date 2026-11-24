@@ -437,8 +437,12 @@ POST_PROMPT = """Ты редактор русскоязычного Telegram-к�
 - Названия брендов, моделей и технологий оставляй в оригинале (ARRI Alexa 35, DaVinci Resolve).
 - Нейтральный информационный тон, без восклицаний, эмодзи, хэштегов и ссылок.
 - Ничего не выдумывай: только факты из статьи.
+- "tag": ОДНА основная тема новости, строго одно слово из списка:
+  камеры, оптика, свет, ПО, звук, мониторы, грип, стабилизаторы, дроны,
+  аккумуляторы, накопители, аксессуары, сумки, выставки, съёмки, индустрия.
+  (ПО — программы, плагины, прошивки; съёмки — как снимали фильмы и сериалы.)
 
-Верни JSON: {{"title": "...", "text": "..."}}
+Верни JSON: {{"title": "...", "text": "...", "tag": "..."}}
 
 Источник: {source}
 Заголовок оригинала: {title}
@@ -448,13 +452,21 @@ POST_PROMPT = """Ты редактор русскоязычного Telegram-к�
 """
 
 
+TAGS = {t.lower(): t for t in """камеры оптика свет ПО звук мониторы грип стабилизаторы дроны
+аккумуляторы накопители аксессуары сумки выставки съёмки индустрия""".split()}
+
+
 def make_post(c, text):
     result = gemini_json(POST_PROMPT.format(source=c["source"], title=c["title"], text=text))
     title = (result.get("title") or "").strip()
     body = (result.get("text") or "").strip()
     if not title or not body:
         raise RuntimeError("Gemini вернул пустой пост")
-    return title, body
+    tag = re.sub(r"[^\wА-Яа-яЁё]", "", (result.get("tag") or "").strip().lstrip("#"))
+    if tag.lower() not in TAGS:
+        tag = "индустрия"
+    tag = TAGS[tag.lower()]
+    return title, body + f"\n\n#{tag}"
 
 
 # ---------- Шаг 5: Telegram ----------
