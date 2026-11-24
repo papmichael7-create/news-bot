@@ -58,7 +58,8 @@
   "https://ymcinema.com/2026/11/24/fujifilm-announces-new-pricing-on-its-imax-certified-flagship": "2026-11-24T16:30:43.821825+00:00",
   "https://www.cined.com/soundsnap-joins-mzed-black-friday-2026-3-months-free-550000-royalty-free-sound-effects-and-search-by-tone": "2026-11-24T16:30:43.821825+00:00",
   "https://nofilmschool.com/best-barbara-eden-movies": "2026-11-24T16:30:43.821825+00:00",
-  "https://www.newsshooter.com/2026/11/24/cinetwin-1-0-a-visualizer-and-digital-twin-for-film-still-photo-productions": "2026-11-24T16:30:43.821825+00:00"
+  "https://www.newsshooter.com/2026/11/24/cinetwin-1-0-a-visualizer-and-digital-twin-for-film-still-photo-productions": "2026-11-24T16:30:43.821825+00:00",
+  "https://www.provideocoalition.com/sandisk-extreme-pro-v60-v90-sd-cards": "2026-11-24T16:30:43.821825+00:00"
  },
  "posted": [
   {
@@ -154,8 +155,15 @@
    "orig": "CineTwin 1.0– a visualizer and digital twin for film & still photo productions",
    "source": "Newsshooter",
    "ts": "2026-11-24T16:31:23.951167+00:00"
+  },
+  {
+   "title": "SanDisk анонсировала карты памяти Extreme PRO SDXC UHS-II емкостью до 2TB",
+   "text": "Компания SanDisk представила новую линейку карт памяти SDXC UHS-II в версиях V60 и V90 максимальной емкостью 2TB. Карты обеспечивают скорость чтения до 300-310 MB/s, а класс защиты IP68 гарантирует устойчивость к воде, пыли и падениям. Стоимость и дата начала продаж пока не объявлены.",
+   "orig": "SanDisk’s Extreme PRO V60 and V90 SD Cards Reach 2TB",
+   "source": "ProVideo Coalition",
+   "ts": "2026-11-24T17:11:24.781100+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795537883.9511368
+ "last_post_ts": 1795540284.7810714
 }
