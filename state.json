@@ -79,7 +79,8 @@
   "https://www.cined.com/viltrox-black-friday-up-to-20-off-af-35mm-f1-4-pro-nexusfocus-f1-and-monitors": "2026-11-25T12:01:00.240836+00:00",
   "https://britishcinematographer.co.uk/london-film-school-awarded-nearly-400000": "2026-11-25T12:01:00.240836+00:00",
   "https://britishcinematographer.co.uk/alia-syed-receives-2026-film-london-jarman-award": "2026-11-25T13:30:47.034206+00:00",
-  "https://britishcinematographer.co.uk/ava-duvernay-laura-mulvey-female-trailblazer-award": "2026-11-25T15:01:04.984644+00:00"
+  "https://britishcinematographer.co.uk/ava-duvernay-laura-mulvey-female-trailblazer-award": "2026-11-25T15:01:04.984644+00:00",
+  "https://www.cined.com/movity-video-platform-launched-a-vimeo-alternative-with-frame-level-search-h-265-4k-streaming-ai-made-work-excluded": "2026-11-25T15:01:04.984644+00:00"
  },
  "posted": [
   {
@@ -217,8 +218,15 @@
    "orig": "London Film School awarded nearly £400,000 to equip MA Filmmaking students with “industry-leading cameras”",
    "source": "British Cinematographer",
    "ts": "2026-11-25T12:01:32.354680+00:00"
+  },
+  {
+   "title": "Запуск видеоплатформы Movity как альтернативы Vimeo для кинематографистов",
+   "text": "Кинематографист Аркадий Креслов запустил платформу Movity для хостинга, портфолио и поиска видео по ключевым кадрам, цветовой палитре и диалогам с исключением контента, созданного с помощью генеративного ИИ. Сервис поддерживает стриминг в H.265 до 4K на тарифном плане Pro и прямую загрузку ProRes-мастеров. Стоимость подписки составляет от 12 до 29 долларов в месяц, а бесплатный тариф включает 2 гигабайта памяти.\n\n#индустрия",
+   "orig": "Movity Video Platform Launched – A Vimeo Alternative with Frame-Level Search, H.265 4K Streaming, AI-Made Work Excluded",
+   "source": "CineD",
+   "ts": "2026-11-25T15:04:01.833792+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795608092.3546536
+ "last_post_ts": 1795619041.8337693
 }
