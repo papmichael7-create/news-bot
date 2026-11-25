@@ -227,6 +227,8 @@
    "ts": "2026-11-25T15:04:01.833792+00:00"
   }
  ],
- "fails": {},
+ "fails": {
+  "https://ymcinema.com/2026/11/25/nikon-positions-red-as-an-upgrade-path-for-mirrorless-shooters": 1
+ },
  "last_post_ts": 1795619041.8337693
 }
