@@ -84,7 +84,8 @@
   "https://ymcinema.com/2026/11/25/nikon-positions-red-as-an-upgrade-path-for-mirrorless-shooters": "2026-11-25T16:30:46.458606+00:00",
   "https://nofilmschool.com/planes-trains-automobiles-like-me": "2026-11-25T16:30:46.458606+00:00",
   "https://britishcinematographer.co.uk/european-parliament-unveils-2027-lux-audience-award-finalists": "2026-11-25T16:30:46.458606+00:00",
-  "https://nofilmschool.com/free-uk-documentary-contest": "2026-11-25T16:30:46.458606+00:00"
+  "https://nofilmschool.com/free-uk-documentary-contest": "2026-11-25T16:30:46.458606+00:00",
+  "https://ymcinema.com/2026/11/25/sony-fx5-is-now-netflix-approved": "2026-11-25T16:30:46.458606+00:00"
  },
  "posted": [
   {
@@ -229,8 +230,15 @@
    "orig": "Movity Video Platform Launched – A Vimeo Alternative with Frame-Level Search, H.265 4K Streaming, AI-Made Work Excluded",
    "source": "CineD",
    "ts": "2026-11-25T15:04:01.833792+00:00"
+  },
+  {
+   "title": "Камера Sony FX5 получила официальный статус Netflix Approved",
+   "text": "Компания Netflix добавила камеру Sony FX5 в список официально одобренных устройств и выпустила подробное руководство по ее настройке для съемки проектов в разрешении 4K. Документ рекомендует использовать внутреннюю 16-битную запись в формате X-OCN LT и технологию Dual Gain для максимального сохранения динамического диапазона. При этом в руководстве отмечены технические ограничения камеры при работе с высокой частотой кадров и режимом Open Gate.\n\n#камеры",
+   "orig": "Sony FX5 Is Now Netflix Approved",
+   "source": "Y.M.Cinema Magazine",
+   "ts": "2026-11-25T16:31:53.971958+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795619041.8337693
+ "last_post_ts": 1795624313.971931
 }
