@@ -76,7 +76,8 @@
   "https://britishcinematographer.co.uk/old-money-new-power-crafting-the-prestige-look-of-war": "2026-11-25T09:01:01.457878+00:00",
   "https://www.cined.com/kodak-reports-growth-in-motion-picture-film-the-odyssey-returns-to-imax-70mm-in-december": "2026-11-25T10:30:46.238604+00:00",
   "https://britishcinematographer.co.uk/a-year-in-the-life-and-gnarly-times-ahead-pt-1": "2026-11-25T12:01:00.240836+00:00",
-  "https://www.cined.com/viltrox-black-friday-up-to-20-off-af-35mm-f1-4-pro-nexusfocus-f1-and-monitors": "2026-11-25T12:01:00.240836+00:00"
+  "https://www.cined.com/viltrox-black-friday-up-to-20-off-af-35mm-f1-4-pro-nexusfocus-f1-and-monitors": "2026-11-25T12:01:00.240836+00:00",
+  "https://britishcinematographer.co.uk/london-film-school-awarded-nearly-400000": "2026-11-25T12:01:00.240836+00:00"
  },
  "posted": [
   {
@@ -207,8 +208,15 @@
    "orig": "Kodak Reports Growth in Motion Picture Film – The Odyssey Returns to IMAX 70mm in December",
    "source": "CineD",
    "ts": "2026-11-25T10:31:33.817969+00:00"
+  },
+  {
+   "title": "London Film School получила грант на закупку камер ARRI и Sony",
+   "text": "London Film School получила финансирование в размере почти 400 тысяч фунтов стерлингов на приобретение трех комплектов ARRI Alexa 35 и трех восстановленных Sony Venice 1. Новое оборудование будет внедрено в учебный процесс с 2027 года в рамках обновленной двухгодичной программы MA Filmmaking.\n\n#камеры",
+   "orig": "London Film School awarded nearly £400,000 to equip MA Filmmaking students with “industry-leading cameras”",
+   "source": "British Cinematographer",
+   "ts": "2026-11-25T12:01:32.354680+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795602693.817941
+ "last_post_ts": 1795608092.3546536
 }
