@@ -73,7 +73,8 @@
   "https://www.newsshooter.com/2026/11/24/save-6490-usd-on-the-zeiss-nano-prime-6-lens-set-sony-e-feet": "2026-11-25T03:01:01.256704+00:00",
   "https://www.newsshooter.com/2026/11/24/save-11359-80-usd-on-the-dzofilm-pavo-2x-anamorphic-6-lens-set-pl-ef-mount-feet": "2026-11-25T03:01:01.256704+00:00",
   "https://www.newsshooter.com/2026/11/24/profoto-snapgrid-l-snapgrid-s-truss-mount-kit-for-propanel-3x2": "2026-11-25T03:01:01.256704+00:00",
-  "https://britishcinematographer.co.uk/old-money-new-power-crafting-the-prestige-look-of-war": "2026-11-25T09:01:01.457878+00:00"
+  "https://britishcinematographer.co.uk/old-money-new-power-crafting-the-prestige-look-of-war": "2026-11-25T09:01:01.457878+00:00",
+  "https://www.cined.com/kodak-reports-growth-in-motion-picture-film-the-odyssey-returns-to-imax-70mm-in-december": "2026-11-25T10:30:46.238604+00:00"
  },
  "posted": [
   {
@@ -197,8 +198,15 @@
    "orig": "Profoto SnapGrid L, SnapGrid S, & Truss Mount Kit for ProPanel 3×2",
    "source": "Newsshooter",
    "ts": "2026-11-25T03:01:31.311876+00:00"
+  },
+  {
+   "title": "Финансовые результаты Kodak и показатели кинопленки",
+   "text": "Компания Kodak отчиталась о росте выручки и прибыли в третьем квартале, отметив дальнейшее увеличение спроса на кинопленку. Сегмент Advanced Materials and Chemicals вырос на 21 процент до 99 миллионов долларов. При этом производство кинопленки сталкивается с ограничениями оборудования и увеличением сроков поставки заказов.\n\n#индустрия",
+   "orig": "Kodak Reports Growth in Motion Picture Film – The Odyssey Returns to IMAX 70mm in December",
+   "source": "CineD",
+   "ts": "2026-11-25T10:31:33.817969+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795575691.3118508
+ "last_post_ts": 1795602693.817941
 }
