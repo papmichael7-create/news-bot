@@ -80,7 +80,11 @@
   "https://britishcinematographer.co.uk/london-film-school-awarded-nearly-400000": "2026-11-25T12:01:00.240836+00:00",
   "https://britishcinematographer.co.uk/alia-syed-receives-2026-film-london-jarman-award": "2026-11-25T13:30:47.034206+00:00",
   "https://britishcinematographer.co.uk/ava-duvernay-laura-mulvey-female-trailblazer-award": "2026-11-25T15:01:04.984644+00:00",
-  "https://www.cined.com/movity-video-platform-launched-a-vimeo-alternative-with-frame-level-search-h-265-4k-streaming-ai-made-work-excluded": "2026-11-25T15:01:04.984644+00:00"
+  "https://www.cined.com/movity-video-platform-launched-a-vimeo-alternative-with-frame-level-search-h-265-4k-streaming-ai-made-work-excluded": "2026-11-25T15:01:04.984644+00:00",
+  "https://ymcinema.com/2026/11/25/nikon-positions-red-as-an-upgrade-path-for-mirrorless-shooters": "2026-11-25T16:30:46.458606+00:00",
+  "https://nofilmschool.com/planes-trains-automobiles-like-me": "2026-11-25T16:30:46.458606+00:00",
+  "https://britishcinematographer.co.uk/european-parliament-unveils-2027-lux-audience-award-finalists": "2026-11-25T16:30:46.458606+00:00",
+  "https://nofilmschool.com/free-uk-documentary-contest": "2026-11-25T16:30:46.458606+00:00"
  },
  "posted": [
   {
@@ -227,8 +231,6 @@
    "ts": "2026-11-25T15:04:01.833792+00:00"
   }
  ],
- "fails": {
-  "https://ymcinema.com/2026/11/25/nikon-positions-red-as-an-upgrade-path-for-mirrorless-shooters": 1
- },
+ "fails": {},
  "last_post_ts": 1795619041.8337693
 }
