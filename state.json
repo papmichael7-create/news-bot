@@ -103,7 +103,8 @@
   "https://www.newsshooter.com/2026/11/25/save-650-usd-on-the-smallhd-cine-5-touchscreen-on-camera-monitor": "2026-11-26T06:01:01.827236+00:00",
   "https://www.newsshooter.com/2026/11/25/save-up-to-500-usd-on-the-apple-mac-mini-with-m4-pro-chip": "2026-11-26T06:01:01.827236+00:00",
   "https://www.newsshooter.com/2026/11/25/shure-vp83f-lenshopper-shotgun-microphone-with-integrated-audio-recorder-on-sale-for-59-usd": "2026-11-26T06:01:01.827236+00:00",
-  "https://www.newsshooter.com/2026/11/26/the-making-of-tenzing": "2026-11-26T09:01:11.822976+00:00"
+  "https://www.newsshooter.com/2026/11/26/the-making-of-tenzing": "2026-11-26T09:01:11.822976+00:00",
+  "https://www.cined.com/ttartisan-af-12mm-f-2-8-announced-full-frame-ultra-wide-autofocus-prime-for-sony-e-and-nikon-z": "2026-11-26T10:30:45.391430+00:00"
  },
  "posted": [
   {
@@ -283,8 +284,15 @@
    "orig": "The Making Of Tenzing",
    "source": "Newsshooter",
    "ts": "2026-11-26T09:01:46.384520+00:00"
+  },
+  {
+   "title": "Анонсирован полнокадровый ультраширокий объектив TTArtisan AF 12mm f/2.8",
+   "text": "Компания TTArtisan представила свой первый широкоугольный объектив с автофокусом для полнокадровых камер Sony E и Nikon Z. Новинка обеспечивает угол обзора 122 градуса, оснащена шаговым мотором STM с поддержкой определения лиц и глаз, а также комплектуется держателем для фильтров диаметром 82 мм. Стоимость объектива составляет 489 долларов США.\n\n#оптика",
+   "orig": "TTArtisan AF 12mm f/2.8 Announced – Full-Frame Ultra-Wide Autofocus Prime for Sony E and Nikon Z",
+   "source": "CineD",
+   "ts": "2026-11-26T10:31:13.840374+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795683706.3844948
+ "last_post_ts": 1795689073.8403413
 }
