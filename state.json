@@ -97,7 +97,8 @@
   "https://www.newsshooter.com/2026/11/25/nanlite-pj-bm-lens-50-a-new-50-lens-for-bowens-mount-projection-attachment": "2026-11-26T00:01:03.777782+00:00",
   "https://www.newsshooter.com/2026/11/25/director-mode-2-0": "2026-11-26T00:01:03.777782+00:00",
   "https://www.newsshooter.com/2026/11/25/save-2000-usd-on-the-teradek-ctrl-5-3-axis-wireless-lens-controller": "2026-11-26T01:30:45.827994+00:00",
-  "https://www.newsshooter.com/2026/11/25/save-1799-70-usd-on-the-nisi-athena-prime-t2-4-1-9-full-frame-5-lens-kit-pl-mount": "2026-11-26T01:30:45.827994+00:00"
+  "https://www.newsshooter.com/2026/11/25/save-1799-70-usd-on-the-nisi-athena-prime-t2-4-1-9-full-frame-5-lens-kit-pl-mount": "2026-11-26T01:30:45.827994+00:00",
+  "https://www.newsshooter.com/2026/11/25/panasonic-shx1-to-start-shipping-in-late-january": "2026-11-26T01:30:45.827994+00:00"
  },
  "posted": [
   {
@@ -263,8 +264,15 @@
    "orig": "Director Mode 2.0",
    "source": "Newsshooter",
    "ts": "2026-11-26T00:41:38.930493+00:00"
+  },
+  {
+   "title": "Начало поставок цифровой кинокамеры Panasonic SHX1",
+   "text": "Поставки новой полнокадровой камеры Panasonic SHX1 начнутся в январе 2027 года. Устройство оснащено 6K-сенсором с частичной обратной засветкой, поддерживает внутреннюю запись ProRes RAW на карты CFexpress Type B и впервые для линейки LUMIX включает предустановленный ARRI LogC3. Компактный корпус в форм-факторе бокса весит 984 грамма и поддерживает работу с аккумуляторами стандарта Micro V mount.\n\n#камеры",
+   "orig": "Panasonic SHX1 to start shipping in late January",
+   "source": "Newsshooter",
+   "ts": "2026-11-26T01:31:21.793921+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795653698.9304678
+ "last_post_ts": 1795656681.793897
 }
