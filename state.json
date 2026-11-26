@@ -94,7 +94,8 @@
   "https://nofilmschool.com/sigma-lens-holiday-savings": "2026-11-25T19:30:45.226329+00:00",
   "https://nofilmschool.com/state-of-indie-producing-financing": "2026-11-25T19:30:45.226329+00:00",
   "https://nofilmschool.com/david-fincher-star-wars-2678528463": "2026-11-25T21:00:59.493317+00:00",
-  "https://www.newsshooter.com/2026/11/25/nanlite-pj-bm-lens-50-a-new-50-lens-for-bowens-mount-projection-attachment": "2026-11-26T00:01:03.777782+00:00"
+  "https://www.newsshooter.com/2026/11/25/nanlite-pj-bm-lens-50-a-new-50-lens-for-bowens-mount-projection-attachment": "2026-11-26T00:01:03.777782+00:00",
+  "https://www.newsshooter.com/2026/11/25/director-mode-2-0": "2026-11-26T00:01:03.777782+00:00"
  },
  "posted": [
   {
@@ -253,8 +254,15 @@
    "orig": "NANLITE PJ-BM-LENS-50: a new 50° Lens for Bowens Mount Projection Attachment",
    "source": "Newsshooter",
    "ts": "2026-11-26T00:01:38.349985+00:00"
+  },
+  {
+   "title": "Вышло приложение Director Mode 2.0 для контроля камерой",
+   "text": "Разработчики выпустили обновление приложения Director Mode 2.0, которое добавляет новые инструменты автофокуса и мониторинга для камер Canon и Sony, улучшенный интерфейс для iPad и поддержку iPhone Duo. Базовая версия приложения доступна бесплатно, а версия Pro стоит 39.99 долларов США с пожизненным доступом ко всем функциям.\n\n#ПО",
+   "orig": "Director Mode 2.0",
+   "source": "Newsshooter",
+   "ts": "2026-11-26T00:41:38.930493+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795651298.3499591
+ "last_post_ts": 1795653698.9304678
 }
