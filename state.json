@@ -113,7 +113,8 @@
   "https://ymcinema.com/2026/11/26/dji-ends-support-for-one-of-its-most-iconic-cinema-drones": "2026-11-26T15:01:04.078699+00:00",
   "https://www.cined.com/nikon-zr-firmware-2-0-finally-out-fujifilm-gfx-eterna-55-now-under-10000-focus-check-ep144": "2026-11-26T16:30:52.695650+00:00",
   "https://nofilmschool.com/famous-movie-parade-scenes": "2026-11-26T18:01:02.336418+00:00",
-  "https://nofilmschool.com/best-thanksgiving-scenes-in-movies": "2026-11-26T18:01:02.336418+00:00"
+  "https://nofilmschool.com/best-thanksgiving-scenes-in-movies": "2026-11-26T18:01:02.336418+00:00",
+  "https://www.provideocoalition.com/flipp-technology-next-gen-oled-monitors-will-be-cheaper-last-longer": "2026-11-26T18:01:02.336418+00:00"
  },
  "posted": [
   {
@@ -314,8 +315,15 @@
    "orig": "DJI Ends Support for One of Its Most Iconic Cinema Drones",
    "source": "Y.M.Cinema Magazine",
    "ts": "2026-11-26T15:01:43.681602+00:00"
+  },
+  {
+   "title": "LG Display анонсировала технологию OLED-мониторов FLiPP",
+   "text": "LG Display представила технологию производства OLED-панелей без использования металлических масок под названием FLiPP. Новая разработка позволяет увеличить яркость на 1.6 раза, продлить срок службы в 2.4 раза и снизить энергопотребление на 13 процентов при уменьшении стоимости производства. Появление первых коммерческих мониторов и планшетов с использованием этой технологии запланировано на 2029 год.\n\n#мониторы",
+   "orig": "FLiPP technology: next-gen OLED monitors will be cheaper, last longer",
+   "source": "ProVideo Coalition",
+   "ts": "2026-11-26T18:01:39.134586+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795705303.6815767
+ "last_post_ts": 1795716099.1345582
 }
