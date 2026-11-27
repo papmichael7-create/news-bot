@@ -141,7 +141,8 @@
   "https://www.provideocoalition.com/lab-test-compendium-2026": "2026-11-27T16:30:45.420191+00:00",
   "https://www.provideocoalition.com/how-movie-parade-scenes-were-filmed": "2026-11-27T16:30:45.420191+00:00",
   "https://nofilmschool.com/family-gathering-horror-movies": "2026-11-27T18:01:03.193099+00:00",
-  "https://nofilmschool.com/holiday-characters-the-public-domain": "2026-11-27T18:01:03.193099+00:00"
+  "https://nofilmschool.com/holiday-characters-the-public-domain": "2026-11-27T18:01:03.193099+00:00",
+  "https://www.cined.com/leitz-photographica-auction-49-fisheye-nikkor-6mm-leica-box-prototype-lomo-anamorphic": "2026-11-27T18:01:03.193099+00:00"
  },
  "posted": [
   {
@@ -398,8 +399,15 @@
    "orig": "How Five Movie Parade Scenes Were Filmed: Real Events and Built Crowds",
    "source": "ProVideo Coalition",
    "ts": "2026-11-27T16:31:25.364895+00:00"
+  },
+  {
+   "title": "На аукционе Leitz выставлен редкий комплект анаморфотной оптики Lomo",
+   "text": "На предстоящих торгах Leitz Photographica Auction будет выставлен винтажный комплект из четырех анаморфотных объективов Lomo в PL-креплении и зума 25-250mm. Оценочная стоимость этого набора 1970-х годов выпуска составляет от 20 000 до 24 000 евро.\n\n#оптика",
+   "orig": "Leitz Photographica Auction 49 – 220° Fisheye-Nikkor 6mm, One-Off Leica BOX Prototype and Lomo Anamorphics",
+   "source": "CineD",
+   "ts": "2026-11-27T18:01:36.596727+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795797085.364866
+ "last_post_ts": 1795802496.596702
 }
