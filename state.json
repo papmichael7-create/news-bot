@@ -127,7 +127,8 @@
   "https://www.newsshooter.com/2026/11/27/save-1000-usd-on-the-gvm-1200b-aio-bi-color-led-monolight": "2026-11-27T10:30:46.709272+00:00",
   "https://www.newsshooter.com/2026/11/27/save-300-usd-on-the-apple-15-macbook-air-m5-midnight": "2026-11-27T10:30:46.709272+00:00",
   "https://www.newsshooter.com/2026/11/27/save-3100-usd-on-the-teradek-rt-fiz-wireless-lens-control-kit-with-ctrl-5-mdr-x-motr-s-max": "2026-11-27T10:30:46.709272+00:00",
-  "https://www.cined.com/nisi-uhc-vnd-1-5-stops-true-color-variable-nd-hard-stops-detachable-knob": "2026-11-27T10:30:46.709272+00:00"
+  "https://www.cined.com/nisi-uhc-vnd-1-5-stops-true-color-variable-nd-hard-stops-detachable-knob": "2026-11-27T10:30:46.709272+00:00",
+  "https://britishcinematographer.co.uk/sponsored-feature-astera-2": "2026-11-27T10:30:46.709272+00:00"
  },
  "posted": [
   {
@@ -356,8 +357,15 @@
    "orig": "cmotion cLInk now available to pre-order",
    "source": "Newsshooter",
    "ts": "2026-11-27T06:54:55.371007+00:00"
+  },
+  {
+   "title": "Опыт использования приборов Astera на съемках фильма I Is Another",
+   "text": "На съемках исторической драмы I Is Another оператор Sebastian Thaler и гаффер Robert Mladenovic использовали светодиодные приборы Astera для воссоздания атмосферы поезда 1950-х годов. Для имитации движения состава в стационарном вагоне команда задействовала систему из 60 трубок Hyperion Tubes, а также устройства Titan Tubes, LunaBulbs и HydraPanel. Все освещение управлялось дистанционно по CRMX и DMX, что позволило оперативно менять параметры света в условиях ограниченного пространства.\n\n#свет",
+   "orig": "Sponsored feature / Astera",
+   "source": "British Cinematographer",
+   "ts": "2026-11-27T10:31:20.432071+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795762495.3709855
+ "last_post_ts": 1795775480.4320464
 }
