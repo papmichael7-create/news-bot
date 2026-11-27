@@ -22,7 +22,7 @@ import subprocess
 import sys
 import time
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import feedparser
 import requests
@@ -270,8 +270,9 @@ def collect_candidates(state):
             published = entry_time(entry)
             if published and published < cutoff:
                 continue
-            content = ""
+            content, raw_html = "", entry.get("summary", "")
             if entry.get("content"):
+                raw_html = entry.content[0].get("value", "") + raw_html
                 content = strip_html(entry.content[0].get("value", ""))
             summary = strip_html(entry.get("summary", ""))
             candidates.append({
@@ -282,6 +283,7 @@ def collect_candidates(state):
                 "summary": summary[:400] or content[:400],
                 "rss_text": content if len(content) > len(summary) else summary,
                 "image": entry_image(entry),
+                "links": html_links(raw_html, link),
                 "published": (published or NOW).isoformat(),
             })
             count += 1
@@ -411,12 +413,52 @@ def select_unique(candidates, state):
 
 
 # ---------- Шаг 4: текст статьи и пост ----------
+SKIP_LINK_HOSTS = ("facebook.", "twitter.", "x.com", "instagram.", "linkedin.", "tiktok.",
+                   "pinterest.", "t.me", "telegram.", "youtube.", "youtu.be", "reddit.",
+                   "patreon.", "wikipedia.", "google.", "apple.com/podcasts", "spotify.")
+
+
+def html_links(raw, base):
+    """Ссылки из HTML: [(текст, адрес)]."""
+    out = []
+    for href, label in re.findall(r'<a\s[^>]*?href=["\']([^"\']+)["\'][^>]*>(.*?)</a>',
+                                  raw or "", flags=re.S | re.I):
+        out.append((strip_html(label), urljoin(base, html.unescape(href))))
+    return out
+
+
+def clean_links(pairs, article_url):
+    """Оставляем только внешние ссылки, похожие на сайты производителей и продуктов."""
+    own = urlsplit(article_url).netloc.lower().removeprefix("www.")
+    seen, result = set(), []
+    for label, url in pairs:
+        url = url.strip()
+        parts = urlsplit(url)
+        host = parts.netloc.lower().removeprefix("www.")
+        if parts.scheme not in ("http", "https") or not host or host == own:
+            continue
+        if any(x in host + parts.path for x in SKIP_LINK_HOSTS):
+            continue
+        if url in seen:
+            continue
+        seen.add(url)
+        result.append((label[:80], url))
+    return result[:40]
+
+
 def fetch_article(c):
-    """Полный текст статьи и картинка. Если сайт не пускает — берём текст из RSS."""
-    text, image = "", c["image"]
+    """Полный текст статьи, картинка и ссылки из неё. Если сайт не пускает — берём текст из RSS."""
+    text, image, pairs = "", c["image"], list(c.get("links", []))
     try:
         page_bytes = http_get(c["link"]).content
         text = trafilatura.extract(page_bytes, include_comments=False, include_tables=False) or ""
+        try:
+            md = trafilatura.extract(page_bytes, output_format="markdown", include_links=True,
+                                     include_comments=False, include_tables=False) or ""
+            for label, href in re.findall(r"\[([^\]]{1,120})\]\((https?://[^)\s]+|/[^)\s]*)\)", md):
+                pairs.append((label, urljoin(c["link"], href)))
+        except Exception:
+            pass
         page = page_bytes.decode("utf-8", errors="ignore")
         if not image:
             m = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)', page) \
@@ -427,7 +469,7 @@ def fetch_article(c):
         log(f"[!] Не удалось открыть статью ({e}), использую текст из RSS")
     if len(text) < len(c["rss_text"]):
         text = c["rss_text"]
-    return text[:12000], image
+    return text[:12000], image, clean_links(pairs, c["link"])
 
 
 POST_PROMPT = """Ты редактор русскоязычного Telegram-канала новостей о кинотехнике
@@ -440,7 +482,7 @@ POST_PROMPT = """Ты редактор русскоязычного Telegram-к�
 - "text": от 2 до 4 предложений. Только суть: что произошло или что анонсировано,
   ключевые характеристики, цена и дата выхода, если они есть в статье.
 - Названия брендов, моделей и технологий оставляй в оригинале (ARRI Alexa 35, DaVinci Resolve).
-- Нейтральный информационный тон, без восклицаний, эмодзи, хэштегов и ссылок.
+- Нейтральный информационный тон, без восклицаний, эмодзи, хэштегов и адресов сайтов в тексте.
 - Ничего не выдумывай: только факты из статьи.
 - "tag": ОДНА основная тема новости, строго одно слово из списка:
   камеры, оптика, свет, ПО, звук, мониторы, грип, стабилизаторы, дроны,
@@ -449,10 +491,23 @@ POST_PROMPT = """Ты редактор русскоязычного Telegram-к�
   опыт — операторы и съёмочные группы делятся опытом, как снимали фильмы и сериалы;
   индустрия — бизнес-новости компаний, сделки, финансовые результаты.)
 
-Верни JSON: {{"title": "...", "text": "...", "tag": "..."}}
+- "link": если новость о конкретном продукте (камера, объектив, свет, программа,
+  обновление, прошивка, аксессуар и т.п.) — ссылка на страницу этого продукта
+  на официальном сайте производителя или разработчика. Бери адрес ТОЛЬКО из списка
+  ссылок ниже. Не магазины (B&H, Amazon, Adorama и т.п.), не соцсети, не другие новости.
+  Если подходящей ссылки в списке нет или новость не о продукте — пустая строка.
+- "link_text": название продукта, на которое вешается ссылка, — ДОСЛОВНО
+  так, как оно написано в твоём "text" (например "DaVinci Resolve 20" или "Aputure STORM 1200x").
+  Если "link" пустая — тоже пустая строка.
+
+Верни JSON: {{"title": "...", "text": "...", "tag": "...", "link": "...", "link_text": "..."}}
 
 Источник: {source}
+Адрес статьи: {url}
 Заголовок оригинала: {title}
+
+Ссылки из статьи (текст ссылки — адрес):
+{links}
 
 Текст статьи:
 {text}
@@ -463,8 +518,13 @@ TAGS = {t.lower(): t for t in """камеры оптика свет ПО зву�
 аккумуляторы накопители аксессуары сумки выставки опыт индустрия""".split()}
 
 
-def make_post(c, text):
-    result = gemini_json(POST_PROMPT.format(source=c["source"], title=c["title"], text=text))
+def make_post(c, text, links):
+    """Возвращает заголовок, текст с хэштегом и ссылку на продукт (или None)."""
+    link_lines = "\n".join(f"- {label or '(без текста)'} — {url}" for label, url in links) or "(нет)"
+    # сайт производителя тоже годится: сама статья может быть страницей продукта
+    allowed = {url for _, url in links} | {c["link"]}
+    result = gemini_json(POST_PROMPT.format(source=c["source"], url=c["link"], title=c["title"],
+                                            links=link_lines, text=text))
     title = (result.get("title") or "").strip()
     body = (result.get("text") or "").strip()
     if not title or not body:
@@ -473,7 +533,14 @@ def make_post(c, text):
     if tag.lower() not in TAGS:
         tag = "индустрия"
     tag = TAGS[tag.lower()]
-    return title, body + f"\n\n#{tag}"
+    link = None
+    url = (result.get("link") or "").strip()
+    anchor = (result.get("link_text") or "").strip()
+    if url in allowed and anchor and anchor in body:
+        link = (anchor, url)
+    elif url or anchor:
+        log(f"[~] Ссылку не вставляю (нет в статье или в тексте): {anchor!r} {url}")
+    return title, body + f"\n\n#{tag}", link
 
 
 # ---------- Шаг 5: Telegram ----------
@@ -485,9 +552,15 @@ def tg(method, payload):
     return data
 
 
-def publish(title, body, image):
-    message = f"<b>{html.escape(title)}</b>\n\n{html.escape(body)}"
-    if image and len(message) <= 1024:
+def publish(title, body, image, link=None):
+    plain = f"{title}\n\n{body}"
+    text = html.escape(body)
+    if link:
+        anchor = html.escape(link[0])
+        a = f'<a href="{html.escape(link[1], quote=True)}">{anchor}</a>'
+        text = text.replace(anchor, a, 1)
+    message = f"<b>{html.escape(title)}</b>\n\n{text}"
+    if image and len(plain) <= 1024:
         try:
             tg("sendPhoto", {"chat_id": CHANNEL, "photo": image,
                              "caption": message, "parse_mode": "HTML"})
@@ -550,8 +623,8 @@ def main():
     for n, i in enumerate(to_post):
         c = candidates[i]
         try:
-            text, image = fetch_article(c)
-            title, body = make_post(c, text)
+            text, image, links = fetch_article(c)
+            title, body, link = make_post(c, text, links)
             # пауза между постами (в том числе между запусками)
             gap = POST_INTERVAL_SEC if n == 0 else spacing
             wait_left = gap - (time.time() - state.get("last_post_ts", 0))
@@ -566,7 +639,7 @@ def main():
                 state["seen"][c["url"]] = NOW.isoformat()
                 push_state(state)
                 continue
-            publish(title, body, image)
+            publish(title, body, image, link)
             state["last_post_ts"] = time.time()
             log(f"[+] Опубликовано: {title}  ({c['source']})")
             state["posted"].append({"title": title, "text": body, "orig": c["title"],
