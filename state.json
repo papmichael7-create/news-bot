@@ -120,7 +120,8 @@
   "https://www.newsshooter.com/2026/11/26/bh-now-offering-free-shipping-to-australia-on-orders-over-300-usd": "2026-11-27T06:01:10.286711+00:00",
   "https://nofilmschool.com/best-black-friday-deals-for-filmmakers-in-2026": "2026-11-27T06:01:10.286711+00:00",
   "https://www.newsshooter.com/2026/11/26/yololiv-mozi-agentic-imaging-system": "2026-11-27T06:01:10.286711+00:00",
-  "https://www.newsshooter.com/2026/11/26/nisi-uhc-vnd-1-5-stops-0-3-1-5-true-color-variable-nd-filters": "2026-11-27T06:01:10.286711+00:00"
+  "https://www.newsshooter.com/2026/11/26/nisi-uhc-vnd-1-5-stops-0-3-1-5-true-color-variable-nd-filters": "2026-11-27T06:01:10.286711+00:00",
+  "https://www.newsshooter.com/2026/11/26/cmotion-clink-now-available-to-pre-order": "2026-11-27T06:01:10.286711+00:00"
  },
  "posted": [
   {
@@ -342,8 +343,15 @@
    "orig": "NiSi UHC VND 1-5 Stops (0.3-1.5) True Color Variable ND Filters",
    "source": "Newsshooter",
    "ts": "2026-11-27T06:28:14.554577+00:00"
+  },
+  {
+   "title": "Доступен предзаказ на устройство cmotion cLInk",
+   "text": "Новинка позволяет выводить настраиваемые данные объектива и расстояния в виде наложения на мониторы SmallHD с системы cPRO LCS. Передача данных осуществляется через LBUS-сеть при подключении по USB-кабелям. Устройство доступно для предзаказа по специальной цене 890 евро, которая действует до конца 2026 года.\n\n#аксессуары",
+   "orig": "cmotion cLInk now available to pre-order",
+   "source": "Newsshooter",
+   "ts": "2026-11-27T06:54:55.371007+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795760894.5545516
+ "last_post_ts": 1795762495.3709855
 }
