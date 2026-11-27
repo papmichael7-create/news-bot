@@ -118,7 +118,8 @@
   "https://nofilmschool.com/thanksgiving-movie-ideas": "2026-11-26T19:30:53.557900+00:00",
   "https://nofilmschool.com/cinemalab-film-emulation-plugin": "2026-11-26T21:01:04.994345+00:00",
   "https://www.newsshooter.com/2026/11/26/bh-now-offering-free-shipping-to-australia-on-orders-over-300-usd": "2026-11-27T06:01:10.286711+00:00",
-  "https://nofilmschool.com/best-black-friday-deals-for-filmmakers-in-2026": "2026-11-27T06:01:10.286711+00:00"
+  "https://nofilmschool.com/best-black-friday-deals-for-filmmakers-in-2026": "2026-11-27T06:01:10.286711+00:00",
+  "https://www.newsshooter.com/2026/11/26/yololiv-mozi-agentic-imaging-system": "2026-11-27T06:01:10.286711+00:00"
  },
  "posted": [
   {
@@ -326,8 +327,15 @@
    "orig": "FLiPP technology: next-gen OLED monitors will be cheaper, last longer",
    "source": "ProVideo Coalition",
    "ts": "2026-11-26T18:01:39.134586+00:00"
+  },
+  {
+   "title": "YoloLiv анонсировала систему YoloLiv Mozi с функциями искусственного интеллекта",
+   "text": "Компания YoloLiv представила YoloLiv Mozi в составе приложения YoloLiv Compose для автоматической настройки камеры YoloCam S3 и подключенных осветительных приборов по текстовому описанию или референсу. Система анализирует живой видеопоток и управляет экспозицией, балансом белого, а также яркостью и цветом света от совместимых устройств NEEWER. В настоящее время новинка находится в статусе превью и доступна бесплатно для тестирования.\n\n#ПО",
+   "orig": "YoloLiv Mozi Agentic Imaging System",
+   "source": "Newsshooter",
+   "ts": "2026-11-27T06:01:33.743206+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795716099.1345582
+ "last_post_ts": 1795759293.7431831
 }
