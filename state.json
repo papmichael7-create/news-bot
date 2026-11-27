@@ -130,7 +130,8 @@
   "https://www.cined.com/nisi-uhc-vnd-1-5-stops-true-color-variable-nd-hard-stops-detachable-knob": "2026-11-27T10:30:46.709272+00:00",
   "https://britishcinematographer.co.uk/sponsored-feature-astera-2": "2026-11-27T10:30:46.709272+00:00",
   "https://www.newsshooter.com/2026/11/27/first-rush-5-3-1": "2026-11-27T10:30:46.709272+00:00",
-  "https://britishcinematographer.co.uk/city-of-angels-film-festival-attended-by-filmmakers-from-all-over-the-world": "2026-11-27T12:01:04.635847+00:00"
+  "https://britishcinematographer.co.uk/city-of-angels-film-festival-attended-by-filmmakers-from-all-over-the-world": "2026-11-27T12:01:04.635847+00:00",
+  "https://www.cined.com/cined-lab-test-compendium-2026-ebook": "2026-11-27T12:01:04.635847+00:00"
  },
  "posted": [
   {
@@ -373,8 +374,15 @@
    "orig": "First Rush 5.3.1",
    "source": "Newsshooter",
    "ts": "2026-11-27T11:11:21.246726+00:00"
+  },
+  {
+   "title": "Вышел справочник CineD Lab Test Compendium с тестами 102 камер",
+   "text": "Портал CineD выпустил онлайн-справочник CineD Lab Test Compendium, объединяющий результаты тестов динамического диапазона, широты экспозиции и роллинг-шаттера для 102 камер от 14 брендов. Издание доступно по цене 29 долларов с бесплатным доступом к будущим обновлениям или бесплатно для годовых подписчиков MZed Pro. Все измерения проводились по единой методике в лаборатории в Вене.\n\n#индустрия",
+   "orig": "CineD Lab Test Compendium Released: Dynamic Range, Latitude and Rolling Shutter for 102 Cameras",
+   "source": "CineD",
+   "ts": "2026-11-27T12:01:41.747075+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795777881.2467003
+ "last_post_ts": 1795780901.7470424
 }
