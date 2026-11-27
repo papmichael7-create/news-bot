@@ -128,7 +128,8 @@
   "https://www.newsshooter.com/2026/11/27/save-300-usd-on-the-apple-15-macbook-air-m5-midnight": "2026-11-27T10:30:46.709272+00:00",
   "https://www.newsshooter.com/2026/11/27/save-3100-usd-on-the-teradek-rt-fiz-wireless-lens-control-kit-with-ctrl-5-mdr-x-motr-s-max": "2026-11-27T10:30:46.709272+00:00",
   "https://www.cined.com/nisi-uhc-vnd-1-5-stops-true-color-variable-nd-hard-stops-detachable-knob": "2026-11-27T10:30:46.709272+00:00",
-  "https://britishcinematographer.co.uk/sponsored-feature-astera-2": "2026-11-27T10:30:46.709272+00:00"
+  "https://britishcinematographer.co.uk/sponsored-feature-astera-2": "2026-11-27T10:30:46.709272+00:00",
+  "https://www.newsshooter.com/2026/11/27/first-rush-5-3-1": "2026-11-27T10:30:46.709272+00:00"
  },
  "posted": [
   {
@@ -364,8 +365,15 @@
    "orig": "Sponsored feature / Astera",
    "source": "British Cinematographer",
    "ts": "2026-11-27T10:31:20.432071+00:00"
+  },
+  {
+   "title": "Вышло обновление программы многокамерной записи First Rush 5.3.1",
+   "text": "Релиз версии 5.3.1 для macOS на базе Apple silicon добавляет запись по SDI с нескольких камер, буферизацию до 60 секунд, улучшенную интеграцию с Final Cut Pro и расширенные инструменты мониторинга. Программа работает с решениями Blackmagic DeckLink и AJA, записывает в ProRes и стоит 140 долларов США в год при наличии семидневного пробного периода.\n\n#ПО",
+   "orig": "First Rush 5.3.1",
+   "source": "Newsshooter",
+   "ts": "2026-11-27T11:11:21.246726+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795775480.4320464
+ "last_post_ts": 1795777881.2467003
 }
