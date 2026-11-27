@@ -138,7 +138,8 @@
   "https://ymcinema.com/2026/11/26/dji-inspire-is-expired": "2026-11-27T15:01:05.138710+00:00",
   "https://ymcinema.com/2026/11/27/panasonics-only-black-friday-deal-on-amazon-is-a-17-year-old-lens": "2026-11-27T15:01:05.138710+00:00",
   "https://www.cined.com/angelbird-black-friday-apex-edge-raw-and-shift-card-and-reader-bundles-with-free-t-shirt": "2026-11-27T15:01:05.138710+00:00",
-  "https://www.provideocoalition.com/lab-test-compendium-2026": "2026-11-27T16:30:45.420191+00:00"
+  "https://www.provideocoalition.com/lab-test-compendium-2026": "2026-11-27T16:30:45.420191+00:00",
+  "https://www.provideocoalition.com/how-movie-parade-scenes-were-filmed": "2026-11-27T16:30:45.420191+00:00"
  },
  "posted": [
   {
@@ -388,8 +389,15 @@
    "orig": "CineD Lab Test Compendium Released: Dynamic Range, Latitude and Rolling Shutter for 102 Cameras",
    "source": "CineD",
    "ts": "2026-11-27T12:01:41.747075+00:00"
+  },
+  {
+   "title": "Разбор пяти киносцен с парадами и особенностей их съемки",
+   "text": "В материале анализируются методы съемки массовых сцен с парадами в известных художественных фильмах. Создатели картин используют как интеграцию съемочных групп в реальные публичные мероприятия, так и полную реконструкцию событий с привлечением массовки и визуальных эффектов. Такой выбор определяет специфику работы операторской команды, организацию многокамерной съемки и требования к планированию.\n\n#опыт",
+   "orig": "How Five Movie Parade Scenes Were Filmed: Real Events and Built Crowds",
+   "source": "ProVideo Coalition",
+   "ts": "2026-11-27T16:31:25.364895+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795780901.7470424
+ "last_post_ts": 1795797085.364866
 }
