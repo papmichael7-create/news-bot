@@ -143,7 +143,8 @@
   "https://nofilmschool.com/family-gathering-horror-movies": "2026-11-27T18:01:03.193099+00:00",
   "https://nofilmschool.com/holiday-characters-the-public-domain": "2026-11-27T18:01:03.193099+00:00",
   "https://www.cined.com/leitz-photographica-auction-49-fisheye-nikkor-6mm-leica-box-prototype-lomo-anamorphic": "2026-11-27T18:01:03.193099+00:00",
-  "https://nofilmschool.com/american-christmas-movies": "2026-11-27T19:30:44.861316+00:00"
+  "https://nofilmschool.com/american-christmas-movies": "2026-11-27T19:30:44.861316+00:00",
+  "https://nofilmschool.com/sekonic-l-878du-light-meter": "2026-11-27T21:01:02.107354+00:00"
  },
  "posted": [
   {
@@ -407,8 +408,15 @@
    "orig": "Leitz Photographica Auction 49 – 220° Fisheye-Nikkor 6mm, One-Off Leica BOX Prototype and Lomo Anamorphics",
    "source": "CineD",
    "ts": "2026-11-27T18:01:36.596727+00:00"
+  },
+  {
+   "title": "Анонсирован новый экспонометр Sekonic L-878D-U с поддержкой EL Zone System",
+   "text": "Компания Sekonic представила новый экспонометр Sekonic L-878D-U для работы с естественным и искусственным освещением. Устройство оснащено 2.7-дюймовым цветным сенсорным экраном, поддерживает беспроводную синхронизацию вспышек и систему экспозиции EL Zone System. Прибор позволяет измерять освещенность в диапазоне от 0.1 до 2 000 000 люкс.\n\n#аксессуары",
+   "orig": "Sekonic’s New Light Meter Aims to Bring Incredibly Precise Measurements of Ambient and Artificial Light",
+   "source": "No Film School",
+   "ts": "2026-11-27T21:01:42.051692+00:00"
   }
  ],
  "fails": {},
- "last_post_ts": 1795802496.596702
+ "last_post_ts": 1795813302.0516646
 }
