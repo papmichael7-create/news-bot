@@ -589,12 +589,17 @@ def vk_photo(image):
         return None
     try:
         content = http_get(image).content
-        server = vk_api("photos.getWallUploadServer", group_id=VK_GROUP_ID)
+        # ключ сообщества не может загружать фото на стену напрямую,
+        # поэтому грузим через сервер сообщений — такое фото тоже можно приложить к посту
+        server = vk_api("photos.getMessagesUploadServer", peer_id=0)
         up = requests.post(server["upload_url"],
                            files={"photo": ("image.jpg", content, "image/jpeg")}, timeout=60).json()
-        saved = vk_api("photos.saveWallPhoto", group_id=VK_GROUP_ID, photo=up["photo"],
+        saved = vk_api("photos.saveMessagesPhoto", photo=up["photo"],
                        server=up["server"], hash=up["hash"])[0]
-        return f"photo{saved['owner_id']}_{saved['id']}"
+        att = f"photo{saved['owner_id']}_{saved['id']}"
+        if saved.get("access_key"):
+            att += f"_{saved['access_key']}"
+        return att
     except Exception as e:
         log(f"[!] VK: картинка не загрузилась ({e})")
         return None
@@ -716,7 +721,12 @@ def vk_test():
     if not last.get("image"):
         # у старых постов картинка не сохранена — проверяем только загрузку фото, без поста
         test_img = "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg"
-        log(f"VK-тест загрузки фото: {vk_photo(test_img)}")
+        photo = vk_photo(test_img)
+        log(f"VK-тест загрузки фото: {photo}")
+        if photo:  # проверяем, что фото прикладывается к посту
+            vk_api("wall.post", owner_id=f"-{VK_GROUP_ID}", from_group=1,
+                   message="Проверка картинки (можно удалить)", attachments=photo)
+            log("[+] VK: тестовый пост с картинкой опубликован")
         return
     log(f"VK-тест: {last['title']}")
     publish_vk(last["title"], last["text"], last.get("image"))
