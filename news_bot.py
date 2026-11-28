@@ -122,6 +122,8 @@ def merge_state(a, b):
             "health": a.get("health") or b.get("health") or {"feeds": {}, "gemini": 0},
             "digest_week": max(a.get("digest_week", ""), b.get("digest_week", "")),
             "last_poll_ts": max(a.get("last_poll_ts", 0), b.get("last_poll_ts", 0)),
+            "discover_month": max(a.get("discover_month", ""), b.get("discover_month", "")),
+            "link_domains": a.get("link_domains") or b.get("link_domains") or {},
             "last_post_ts": max(a.get("last_post_ts", 0), b.get("last_post_ts", 0))}
 
 
@@ -834,6 +836,7 @@ def main():
                                     "source": c["source"], "tg_id": tg_id,
                                     "ts": datetime.now(timezone.utc).isoformat()})
             state["seen"][c["url"]] = NOW.isoformat()
+            note_domains(state, links, c["source"])
         except FactCheckError as e:
             log(f"[x] Не публикую, факты не сошлись: {c['title']} — {e}")
             state["seen"][c["url"]] = NOW.isoformat()
@@ -937,11 +940,131 @@ def maybe_poll(state):
     log(f"[+] Опрос опубликован: {q}")
 
 
+# ---------- Поиск новых источников (раз в месяц) ----------
+SHOP_HOSTS = ("bhphotovideo.", "amazon.", "adorama.", "ebay.", "aliexpress.", "walmart.",
+              "bestbuy.", "kickstarter.", "indiegogo.", "vimeo.", "apple.com", "github.")
+
+DISCOVER_PROMPT = """Ты редактор канала новостей о кинотехнике для камерного цеха
+(камеры, оптика, свет, грип, звук, мониторы, аксессуары, ПО для видео, выставки).
+Ниже сайты-кандидаты в источники новостей: адрес, название ленты и свежие заголовки.
+Для каждого оцени: подходит ли тематика и насколько источник достоверный
+(официальный производитель, известное отраслевое издание, выставка — достоверно;
+перепечатки, агрегаторы, магазины, личные блоги без экспертизы — нет).
+Верни JSON: {{"items": [{{"domain": "...", "relevant": true/false,
+"kind": "производитель/издание/выставка/блог/магазин/другое", "reliable": true/false,
+"note": "одна фраза по-русски"}}]}}
+
+{items}
+"""
+
+
+def domain_of(url):
+    return urlsplit(url).netloc.lower().removeprefix("www.")
+
+
+def note_domains(state, links, source):
+    """Запоминаем, на какие сайты ссылаются статьи наших источников."""
+    d = state.setdefault("link_domains", {})
+    for _, url in links:
+        host = domain_of(url)
+        if not host or any(x in host for x in SHOP_HOSTS):
+            continue
+        rec = d.setdefault(host, {"n": 0, "src": []})
+        rec["n"] += 1
+        if source not in rec["src"]:
+            rec["src"].append(source)
+    if len(d) > 300:  # не даём файлу памяти разрастаться
+        keep = sorted(d, key=lambda h: d[h]["n"], reverse=True)[:200]
+        state["link_domains"] = {h: d[h] for h in keep}
+
+
+def find_feed(host):
+    """Ищем RSS/Atom-ленту сайта. Возвращаем (адрес, лента) или (None, None)."""
+    cands = []
+    for base in (f"https://{host}", f"https://www.{host}"):
+        try:
+            page = http_get(base, timeout=20).text
+            for m in re.finditer(r'<link[^>]+type=["\']application/(?:rss|atom)\+xml["\'][^>]*>', page):
+                h = re.search(r'href=["\']([^"\']+)', m.group())
+                if h:
+                    cands.append(urljoin(base, html.unescape(h.group(1))))
+            cands += [base + "/feed/", base + "/rss", base + "/feed.xml", base + "/news/feed/"]
+            break
+        except Exception:
+            continue
+    for u in dict.fromkeys(cands):
+        try:
+            feed = feedparser.parse(http_get(u, timeout=20).content)
+            if feed.entries:
+                return u, feed
+        except Exception:
+            continue
+    return None, None
+
+
+def maybe_discover(state):
+    """Раз в месяц ищем новые источники и присылаем список на почту (через задачу на GitHub)."""
+    month = datetime.now(MSK).strftime("%Y-%m")
+    if state.get("discover_month") == month:
+        return
+    token, repo = os.environ.get("GITHUB_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
+    if not token or not repo:
+        return
+    have = {domain_of(u) for u in read_sources()}
+    stats = state.get("link_domains", {})
+    hosts = [h for h, r in sorted(stats.items(), key=lambda kv: kv[1]["n"], reverse=True)
+             if h not in have and (len(r["src"]) >= 2 or r["n"] >= 3)][:15]
+    state["discover_month"] = month
+    if not hosts:
+        log("[~] Поиск источников: кандидатов пока нет")
+        return
+    month_ago = datetime.now(timezone.utc) - timedelta(days=30)
+    found = []
+    for h in hosts:
+        url, feed = find_feed(h)
+        if not url:
+            continue
+        recent = sum(1 for e in feed.entries if (entry_time(e) or month_ago) > month_ago)
+        titles = [strip_html(e.get("title", "")) for e in feed.entries[:5]]
+        found.append({"domain": h, "feed": url, "title": feed.feed.get("title", h),
+                      "recent": recent, "titles": titles, "refs": stats[h]})
+    if not found:
+        log("[~] Поиск источников: у кандидатов нет RSS-лент")
+        return
+    items = "\n\n".join(f"{f['domain']} — {f['title']}\n" + "\n".join(f"  - {t}" for t in f["titles"])
+                         for f in found)
+    try:
+        verdict = {x.get("domain"): x for x in gemini_json(DISCOVER_PROMPT.format(items=items)).get("items", [])}
+    except Exception as e:
+        log(f"[~] Поиск источников: Gemini не ответил ({e})")
+        verdict = {}
+    owner = repo.split("/")[0]
+    good, other = [], []
+    for f in found:
+        v = verdict.get(f["domain"], {})
+        line = (f"- **{f['domain']}** — {f['title']}\n  лента: {f['feed']}\n"
+                f"  постов за 30 дней: {f['recent']}; на сайт ссылались {f['refs']['n']} раз(а) "
+                f"из: {', '.join(f['refs']['src'][:4])}\n"
+                f"  оценка: {v.get('kind', '?')}, {'достоверный' if v.get('reliable') else 'достоверность под вопросом'}"
+                f" — {v.get('note', '')}")
+        (good if v.get("relevant") and v.get("reliable") else other).append(line)
+    body = (f"@{owner}, бот нашёл кандидатов в новые источники за {month}.\n"
+            "Ничего не добавлено автоматически. Напишите Claude, какие подключить.\n\n"
+            "### Подходят по теме и выглядят достоверными\n" + ("\n".join(good) or "— нет") +
+            "\n\n### Остальные (сомнительные или не по теме)\n" + ("\n".join(other) or "— нет"))
+    r = requests.post(f"https://api.github.com/repos/{repo}/issues", timeout=30,
+                      headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"},
+                      json={"title": f"Кандидаты в источники — {month}", "body": body})
+    if r.status_code >= 300:
+        raise RuntimeError(f"не удалось создать задачу на GitHub: {r.status_code} {r.text[:200]}")
+    log(f"[+] Поиск источников: отправлен список из {len(found)} кандидатов")
+
+
 def extras():
     """Дайджест и опросы: запускаются после основной работы бота."""
     state = load_state()
     sync_state(state)
-    for job in (maybe_digest, maybe_poll):
+    for job in (maybe_digest, maybe_poll, maybe_discover):
         try:
             job(state)
         except Exception as e:
