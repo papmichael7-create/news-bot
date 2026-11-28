@@ -8,6 +8,10 @@ on:
         description: "Только проверить ВКонтакте (повторить последний пост)"
         type: boolean
         default: false
+      site_only:
+        description: "Только пересобрать сайт"
+        type: boolean
+        default: false
 
 permissions:
   contents: write             # чтобы сохранять state.json
@@ -39,4 +43,4 @@ jobs:
           VK_TOKEN: ${{ secrets.VK_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TELEGRAM_CHANNEL: "@newsfrom1AC"
-        run: python news_bot.py ${{ inputs.vk_test && '--vk-test' || '' }}
+        run: python news_bot.py ${{ inputs.vk_test && '--vk-test' || '' }} ${{ inputs.site_only && '--site' || '' }}
