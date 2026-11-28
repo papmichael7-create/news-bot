@@ -605,7 +605,7 @@ def vk_photo(image):
         return None
 
 
-def publish_vk(title, body, image, link=None):
+def publish_vk(title, body, image, link=None, article=None):
     """Дублирует пост в группу ВКонтакте. Ошибки ВК не мешают Telegram."""
     if not VK_TOKEN:
         return
@@ -618,9 +618,9 @@ def publish_vk(title, body, image, link=None):
             message += f"\n\n#{tag}"
         params = {"owner_id": f"-{VK_GROUP_ID}", "from_group": 1, "message": message}
         # загрузка фото ключом сообщества не работает (ВК не показывает картинку),
-        # поэтому картинку даёт превью ссылки на сайт производителя
-        if link:
-            params["attachments"] = link[1]
+        # поэтому картинку даёт превью ссылки: сайт производителя, иначе исходная статья
+        if link or article:
+            params["attachments"] = link[1] if link else article
         vk_api("wall.post", **params)
         log("[+] VK: опубликовано")
     except Exception as e:
@@ -696,7 +696,7 @@ def main():
                 push_state(state)
                 continue
             publish(title, body, image, link)
-            publish_vk(title, body, image, link)
+            publish_vk(title, body, image, link, c["link"])
             state["last_post_ts"] = time.time()
             log(f"[+] Опубликовано: {title}  ({c['source']})")
             state["posted"].append({"title": title, "text": body, "orig": c["title"], "image": image,
