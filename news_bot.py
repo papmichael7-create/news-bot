@@ -42,7 +42,7 @@ MAX_FAILS = 3  # сколько раз пробовать статью, если
 
 MAX_AGE_HOURS = int(os.environ.get("MAX_AGE_HOURS", "36"))       # статьи старше не берём
 MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "8"))  # постов за один запуск
-HISTORY_DAYS = int(os.environ.get("HISTORY_DAYS", "5"))           # сколько дней помнить темы
+HISTORY_DAYS = int(os.environ.get("HISTORY_DAYS", "7"))           # сколько дней помнить темы (и для дайджеста)
 POST_INTERVAL_SEC = int(os.environ.get("POST_INTERVAL_SEC", "300"))  # минимальная пауза между постами (5 минут)
 SPREAD_WINDOW_SEC = int(os.environ.get("SPREAD_WINDOW_SEC", "9600"))  # растягиваем посты запуска на ~160 минут
 
@@ -120,6 +120,8 @@ def merge_state(a, b):
         fails[u] = max(n, fails.get(u, 0))
     return {"seen": seen, "posted": posted, "fails": fails,
             "health": a.get("health") or b.get("health") or {"feeds": {}, "gemini": 0},
+            "digest_week": max(a.get("digest_week", ""), b.get("digest_week", "")),
+            "last_poll_ts": max(a.get("last_poll_ts", 0), b.get("last_poll_ts", 0)),
             "last_post_ts": max(a.get("last_post_ts", 0), b.get("last_post_ts", 0))}
 
 
@@ -669,13 +671,14 @@ def publish(title, body, image, link=None, source=None):
     message = f"<b>{html.escape(title)}</b>\n\n{text}"
     if image and len(plain) <= 1024:
         try:
-            tg("sendPhoto", {"chat_id": CHANNEL, "photo": image,
-                             "caption": message, "parse_mode": "HTML"})
-            return
+            r = tg("sendPhoto", {"chat_id": CHANNEL, "photo": image,
+                                 "caption": message, "parse_mode": "HTML"})
+            return r["result"]["message_id"]
         except Exception as e:
             log(f"[!] Картинка не отправилась ({e}), публикую текстом")
-    tg("sendMessage", {"chat_id": CHANNEL, "text": message, "parse_mode": "HTML",
-                       "link_preview_options": {"is_disabled": True}})
+    r = tg("sendMessage", {"chat_id": CHANNEL, "text": message, "parse_mode": "HTML",
+                           "link_preview_options": {"is_disabled": True}})
+    return r["result"]["message_id"]
 
 
 # ---------- Шаг 6: копия поста во ВКонтакте ----------
@@ -805,12 +808,12 @@ def main():
                 state["seen"][c["url"]] = NOW.isoformat()
                 push_state(state)
                 continue
-            publish(title, body, image, link, c["link"])
+            tg_id = publish(title, body, image, link, c["link"])
             publish_vk(title, body, image, link, c["link"])
             state["last_post_ts"] = time.time()
             log(f"[+] Опубликовано: {title}  ({c['source']})")
             state["posted"].append({"title": title, "text": body, "orig": c["title"], "image": image,
-                                    "source": c["source"],
+                                    "source": c["source"], "tg_id": tg_id,
                                     "ts": datetime.now(timezone.utc).isoformat()})
             state["seen"][c["url"]] = NOW.isoformat()
         except FactCheckError as e:
@@ -824,6 +827,108 @@ def main():
                 state["seen"][c["url"]] = NOW.isoformat()  # больше не пробуем
                 problem(f"не удалось опубликовать статью после {MAX_FAILS} попыток: {c['title']} ({e})")
         push_state(state)
+
+
+# ---------- Дайджест недели и опросы ----------
+MSK = timezone(timedelta(hours=3))
+POLL_EVERY_SEC = 44 * 3600  # примерно раз в два дня
+
+DIGEST_PROMPT = """Ты редактор канала новостей о кинотехнике для камерного цеха.
+Ниже новости за неделю. Выбери до 7 самых важных и интересных для операторов,
+механиков и гафферов (новые камеры, оптика, свет, крупные обновления ПО, выставки).
+Не бери почти одинаковые новости дважды. Верни JSON: {{"ids": [номера по важности]}}
+
+{items}
+"""
+
+POLL_PROMPT = """Ты редактор канала новостей о кинотехнике для камерного цеха.
+Ниже свежие новости. Выбери ОДНУ, по которой профессионалам интересно проголосовать
+(новая камера, объектив, свет, обновление, тренд), и придумай короткий опрос на русском:
+вопрос до 200 символов и 2–4 варианта ответа до 60 символов. Нейтрально, без рекламы
+и призывов купить. Если ни одна новость не подходит — верни {{"skip": true}}.
+Верни JSON: {{"id": номер, "question": "...", "options": ["...", "..."]}}
+
+{items}
+"""
+
+
+def channel_link(msg_id):
+    return f"https://t.me/{CHANNEL.lstrip('@')}/{msg_id}" if msg_id else None
+
+
+def maybe_digest(state):
+    """По воскресеньям вечером — «Главное за неделю» в Telegram и ВКонтакте."""
+    now = datetime.now(MSK)
+    week = f"{now.isocalendar()[0]}-W{now.isocalendar()[1]:02d}"
+    if now.weekday() != 6 or now.hour < 18 or state.get("digest_week") == week:
+        return
+    since = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+    posts = [p for p in state["posted"] if p["ts"] >= since]
+    if len(posts) < 3:
+        return
+    items = "\n".join(f"{i}. {p['title']}" for i, p in enumerate(posts))
+    try:
+        ids = [int(i) for i in gemini_json(DIGEST_PROMPT.format(items=items)).get("ids", [])]
+        chosen = [posts[i] for i in dict.fromkeys(ids) if 0 <= i < len(posts)][:7]
+    except Exception as e:
+        log(f"[~] Дайджест: Gemini не ответил ({e}), беру последние новости")
+        chosen = []
+    chosen = chosen or posts[-7:]
+    lines_tg, lines_vk = [], []
+    for p in chosen:
+        url = channel_link(p.get("tg_id"))
+        t = html.escape(p["title"])
+        lines_tg.append(f"• <a href=\"{url}\">{t}</a>" if url else f"• {t}")
+        lines_vk.append(f"• {p['title']}")
+    tg("sendMessage", {"chat_id": CHANNEL, "parse_mode": "HTML",
+                       "text": "<b>Главное за неделю</b>\n\n" + "\n".join(lines_tg) + "\n\n#дайджест",
+                       "link_preview_options": {"is_disabled": True}})
+    if VK_TOKEN:
+        try:
+            vk_api("wall.post", owner_id=f"-{VK_GROUP_ID}", from_group=1,
+                   message="Главное за неделю\n\n" + "\n".join(lines_vk) + "\n\n#дайджест")
+        except Exception as e:
+            problem(f"ВКонтакте не принял дайджест: {e}")
+    state["digest_week"] = week
+    log(f"[+] Дайджест недели опубликован ({len(chosen)} новостей)")
+
+
+def maybe_poll(state):
+    """Примерно раз в два дня — опрос в Telegram по свежей новости (ответом на пост)."""
+    if time.time() - state.get("last_poll_ts", 0) < POLL_EVERY_SEC:
+        return
+    since = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+    posts = [p for p in state["posted"] if p["ts"] >= since and p.get("tg_id")]
+    if not posts:
+        return
+    items = "\n".join(f"{i}. {p['title']} — {p['text'][:300]}" for i, p in enumerate(posts))
+    r = gemini_json(POLL_PROMPT.format(items=items))
+    if r.get("skip"):
+        log("[~] Опрос: подходящей новости нет")
+        return
+    i = int(r.get("id", -1))
+    q = (r.get("question") or "").strip()[:300]
+    opts = [str(o).strip()[:100] for o in r.get("options", []) if str(o).strip()][:4]
+    if not (0 <= i < len(posts)) or not q or len(opts) < 2:
+        log(f"[~] Опрос: Gemini вернул неподходящий ответ {r}")
+        return
+    tg("sendPoll", {"chat_id": CHANNEL, "question": q, "is_anonymous": True,
+                    "options": [{"text": o} for o in opts],
+                    "reply_parameters": {"message_id": posts[i]["tg_id"]}})
+    state["last_poll_ts"] = time.time()
+    log(f"[+] Опрос опубликован: {q}")
+
+
+def extras():
+    """Дайджест и опросы: запускаются после основной работы бота."""
+    state = load_state()
+    sync_state(state)
+    for job in (maybe_digest, maybe_poll):
+        try:
+            job(state)
+        except Exception as e:
+            problem(f"{job.__name__}: {e}")
+    push_state(state)
 
 
 def find_article(orig):
@@ -860,7 +965,11 @@ def vk_test():
 
 
 if __name__ == "__main__":
-    vk_test() if "--vk-test" in sys.argv else main()
+    if "--vk-test" in sys.argv:
+        vk_test()
+    else:
+        main()
+        extras()
     if PROBLEMS:
         log("\n===== ИТОГ: есть проблемы =====")
         for x in PROBLEMS:
