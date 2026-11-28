@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write             # чтобы сохранять state.json
+  issues: write               # раз в месяц — список кандидатов в источники
 
 concurrency:
   group: news-bot
@@ -36,5 +37,6 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           VK_TOKEN: ${{ secrets.VK_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TELEGRAM_CHANNEL: "@newsfrom1AC"
         run: python news_bot.py ${{ inputs.vk_test && '--vk-test' || '' }}
