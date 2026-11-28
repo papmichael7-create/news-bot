@@ -501,6 +501,8 @@ POST_PROMPT = """Ты редактор русскоязычного Telegram-к�
 - Названия брендов, моделей и технологий оставляй в оригинале (ARRI Alexa 35, DaVinci Resolve).
 - Нейтральный информационный тон, без восклицаний, эмодзи, хэштегов и адресов сайтов в тексте.
 - Ничего не выдумывай: только факты из статьи.
+- Это новость, а не реклама: никаких оценок вроде «лучший», «потрясающий», «must have»,
+  никаких призывов купить, заказать или успеть, никаких магазинов и промокодов.
 - "tag": ОДНА основная тема новости, строго одно слово из списка:
   камеры, оптика, свет, ПО, звук, мониторы, грип, стабилизаторы, дроны,
   аккумуляторы, накопители, аксессуары, сумки, выставки, опыт, индустрия.
@@ -531,6 +533,85 @@ POST_PROMPT = """Ты редактор русскоязычного Telegram-к�
 """
 
 
+VERIFY_PROMPT = """Ты фактчекер новостного канала о кинотехнике.
+Сверь пост с текстом статьи. Проверь КАЖДУЮ цифру, характеристику, название модели,
+цену, валюту, дату, разрешение, вес, размер, имя и название компании.
+Всё, что не подтверждается статьёй или искажено, исправь по статье, а если исправить
+нельзя — убери из поста. Не добавляй новых фактов, не меняй стиль и длину без нужды.
+{extra}
+Верни JSON: {{"title": "...", "text": "...", "fixed": ["что исправлено", ...]}}
+
+Пост:
+Заголовок: {title}
+Текст: {text}
+
+Статья (заголовок оригинала: {orig}):
+{article}
+"""
+
+
+class FactCheckError(RuntimeError):
+    """Цифры в посте не подтверждаются статьёй — такой пост не публикуем."""
+
+
+def numbers(s):
+    """Все числа из текста в нескольких вариантах записи (24 000 / 24,000 / 2,7 / 2.7)."""
+    out = []
+    for m in re.finditer(r"\d(?:[\d.,]|[ \u00a0\u202f](?=\d{3}\b))*\d|\d", s):
+        t = re.sub(r"[ \u00a0\u202f]", "", m.group())
+        cands = set()
+        for v in (t.replace(",", ""), t.replace(".", "").replace(",", "."), t.replace(",", "").replace(".", "")):
+            try:
+                f = float(v)
+                cands.add(int(f) if f == int(f) else round(f, 4))
+            except ValueError:
+                pass
+        if cands:
+            out.append((m.group(), cands))
+    return out
+
+
+NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+                "ten", "eleven", "twelve"]
+NUMBER_WORDS_RU = ["ноль", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь",
+                   "девять", "десять", "одиннадцать", "двенадцать"]
+
+
+def unconfirmed_numbers(post, article):
+    known = set()
+    for _, c in numbers(article):
+        known |= c
+    low = article.lower()
+    for n, (en, ru) in enumerate(zip(NUMBER_WORDS, NUMBER_WORDS_RU)):  # числа словами
+        if re.search(rf"\b{en}\b", low) or ru in low:
+            known.add(n)
+    return [raw for raw, c in numbers(post) if not (c & known)]
+
+
+def fact_check(title, body, article, orig):
+    """Gemini сверяет пост со статьёй, затем код проверяет, что все цифры есть в статье."""
+    source = f"{orig}\n{article}"
+    extra = ""
+    for attempt in range(2):
+        try:
+            r = gemini_json(VERIFY_PROMPT.format(title=title, text=body, orig=orig,
+                                                 article=article, extra=extra))
+            t2, b2 = (r.get("title") or "").strip(), (r.get("text") or "").strip()
+            if t2 and b2:
+                if r.get("fixed"):
+                    log(f"[✓] Фактчек исправил: {r['fixed']}")
+                title, body = t2, b2
+        except Exception as e:
+            log(f"[~] Фактчек Gemini не сработал ({e}), проверяю только цифры")
+        bad = unconfirmed_numbers(f"{title}\n{body}", source)
+        if not bad:
+            return title, body
+        log(f"[~] В статье нет цифр: {bad}")
+        extra = ("ВНИМАНИЕ: этих чисел нет в статье, исправь или убери их: "
+                 + ", ".join(bad) + ". Пиши числа так же, как в статье.")
+    raise FactCheckError(f"цифры не подтверждаются статьёй: {bad}")
+
+
 TAGS = {t.lower(): t for t in """камеры оптика свет ПО звук мониторы грип стабилизаторы дроны
 аккумуляторы накопители аксессуары сумки выставки опыт индустрия""".split()}
 
@@ -546,6 +627,7 @@ def make_post(c, text, links):
     body = (result.get("text") or "").strip()
     if not title or not body:
         raise RuntimeError("Gemini вернул пустой пост")
+    title, body = fact_check(title, body, text, c["title"])
     tag = re.sub(r"[^\wА-Яа-яЁё]", "", (result.get("tag") or "").strip().lstrip("#"))
     if tag.lower() not in TAGS:
         tag = "индустрия"
@@ -569,13 +651,20 @@ def tg(method, payload):
     return data
 
 
-def publish(title, body, image, link=None):
-    plain = f"{title}\n\n{body}"
-    text = html.escape(body)
+def publish(title, body, image, link=None, source=None):
+    main_text, _, tag = body.rpartition("\n\n#")
+    if not main_text:
+        main_text, tag = body, ""
+    plain = f"{title}\n\n{main_text}\n\nИсточник\n\n#{tag}"
+    text = html.escape(main_text)
     if link:
         anchor = html.escape(link[0])
         a = f'<a href="{html.escape(link[1], quote=True)}">{anchor}</a>'
         text = text.replace(anchor, a, 1)
+    if source:  # слово «Источник» — ссылка на исходную статью
+        text += f'\n\n<a href="{html.escape(source, quote=True)}">Источник</a>'
+    if tag:
+        text += f"\n\n#{html.escape(tag)}"
     message = f"<b>{html.escape(title)}</b>\n\n{text}"
     if image and len(plain) <= 1024:
         try:
@@ -631,8 +720,8 @@ def publish_vk(title, body, image, link=None, article=None):
         # поэтому ставим ссылку в текст — ВК сам делает из неё превью с картинкой
         if link:
             message += f"\n\n{link[0]}: {link[1]}"
-        elif article:
-            message += f"\n\nПодробнее: {article}"
+        if article:
+            message += f"\n\nИсточник: {article}"
         if text:
             message += f"\n\n#{tag}"
         vk_api("wall.post", owner_id=f"-{VK_GROUP_ID}", from_group=1, message=message)
@@ -713,13 +802,16 @@ def main():
                 state["seen"][c["url"]] = NOW.isoformat()
                 push_state(state)
                 continue
-            publish(title, body, image, link)
+            publish(title, body, image, link, c["link"])
             publish_vk(title, body, image, link, c["link"])
             state["last_post_ts"] = time.time()
             log(f"[+] Опубликовано: {title}  ({c['source']})")
             state["posted"].append({"title": title, "text": body, "orig": c["title"], "image": image,
                                     "source": c["source"],
                                     "ts": datetime.now(timezone.utc).isoformat()})
+            state["seen"][c["url"]] = NOW.isoformat()
+        except FactCheckError as e:
+            log(f"[x] Не публикую, факты не сошлись: {c['title']} — {e}")
             state["seen"][c["url"]] = NOW.isoformat()
         except Exception as e:
             fails = state["fails"].get(c["url"], 0) + 1
