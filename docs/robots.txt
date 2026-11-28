@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://papmichael7-create.github.io/news-bot/sitemap.xml

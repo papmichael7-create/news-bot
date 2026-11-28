@@ -419,5 +419,13 @@
   }
  ],
  "fails": {},
+ "health": {
+  "feeds": {},
+  "gemini": 0
+ },
+ "digest_week": "",
+ "last_poll_ts": 0,
+ "discover_month": "",
+ "link_domains": {},
  "last_post_ts": 1795813302.0516646
 }
