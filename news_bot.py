@@ -17,6 +17,7 @@
 import html
 import json
 import os
+import random
 import re
 import subprocess
 import sys
@@ -777,20 +778,22 @@ def main():
             state["seen"][c["url"]] = NOW.isoformat()
     push_state(state)
 
-    # равномерно распределяем посты по интервалу до следующего запуска (3 часа)
-    spacing = POST_INTERVAL_SEC
-    if len(to_post) > 1:
-        spacing = max(POST_INTERVAL_SEC, SPREAD_WINDOW_SEC // len(to_post))
-    log(f"Постов в этом запуске: {len(to_post)}, интервал между ними ~{spacing // 60} мин")
+    # распределяем посты по интервалу до следующего запуска (3 часа): каждому посту
+    # своя часть интервала и случайное время внутри неё, чтобы посты выходили не ровно по часам
+    start = time.time()
+    slot = SPREAD_WINDOW_SEC / max(1, len(to_post))
+    targets = [start + k * slot + random.uniform(0, slot * 0.7) for k in range(len(to_post))]
+    log(f"Постов в этом запуске: {len(to_post)}, время выхода: "
+        + ", ".join(datetime.fromtimestamp(t, timezone(timedelta(hours=3))).strftime("%H:%M")
+                    for t in targets) + " (МСК)")
 
     for n, i in enumerate(to_post):
         c = candidates[i]
         try:
             text, image, links = fetch_article(c)
             title, body, link = make_post(c, text, links)
-            # пауза между постами (в том числе между запусками)
-            gap = POST_INTERVAL_SEC if n == 0 else spacing
-            wait_left = gap - (time.time() - state.get("last_post_ts", 0))
+            # ждём своё случайное время, но не меньше 5 минут после предыдущего поста
+            wait_left = max(targets[n], state.get("last_post_ts", 0) + POST_INTERVAL_SEC) - time.time()
             if wait_left > 0:
                 log(f"[..] Жду {int(wait_left)} c до следующего поста")
                 time.sleep(wait_left)
