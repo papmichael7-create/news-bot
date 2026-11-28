@@ -712,22 +712,37 @@ def main():
         push_state(state)
 
 
+def find_article(orig):
+    """Ищет статью в лентах по оригинальному заголовку."""
+    for feed_url in read_sources():
+        try:
+            feed = feedparser.parse(http_get(feed_url).content)
+        except Exception:
+            continue
+        for entry in feed.entries:
+            if strip_html(entry.get("title", "")) != orig or not entry.get("link"):
+                continue
+            raw_html = (entry.content[0].get("value", "") if entry.get("content") else "") \
+                + entry.get("summary", "")
+            return {"link": entry.link, "title": orig, "image": entry_image(entry),
+                    "source": feed.feed.get("title") or urlsplit(feed_url).netloc,
+                    "rss_text": strip_html(raw_html), "links": html_links(raw_html, entry.link)}
+    return None
+
+
 def vk_test():
-    """Проверка ВКонтакте: повторяет последний пост канала в группе."""
+    """Проверка ВКонтакте: заново собирает последний пост канала и публикует его в группе."""
     state = load_state()
     last = state["posted"][-1] if state["posted"] else {"title": "Проверка", "text": "Тестовый пост."}
-    if not last.get("image"):
-        # у старых постов картинка не сохранена — проверяем только загрузку фото, без поста
-        test_img = "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg"
-        photo = vk_photo(test_img)
-        log(f"VK-тест загрузки фото: {photo}")
-        if photo:  # проверяем, что фото прикладывается к посту
-            vk_api("wall.post", owner_id=f"-{VK_GROUP_ID}", from_group=1,
-                   message="Проверка картинки (можно удалить)", attachments=photo)
-            log("[+] VK: тестовый пост с картинкой опубликован")
+    c = find_article(last.get("orig", ""))
+    if not c:
+        log(f"VK-тест: статья не найдена в лентах, публикую как есть: {last['title']}")
+        publish_vk(last["title"], last["text"], None)
         return
-    log(f"VK-тест: {last['title']}")
-    publish_vk(last["title"], last["text"], last.get("image"))
+    text, image, links = fetch_article(c)
+    title, body, link = make_post(c, text, links)
+    log(f"VK-тест: {title} | ссылка на продукт: {link}")
+    publish_vk(title, body, image, link, c["link"])
 
 
 if __name__ == "__main__":
