@@ -612,16 +612,15 @@ def publish_vk(title, body, image, link=None, article=None):
     try:
         text, _, tag = body.rpartition("\n\n#")
         message = f"{title}\n\n{text or body}"
+        # фото ключом сообщества не загрузить, а ссылку-вложение ВК без фото не принимает,
+        # поэтому ставим ссылку в текст — ВК сам делает из неё превью с картинкой
         if link:
             message += f"\n\n{link[0]}: {link[1]}"
+        elif article:
+            message += f"\n\nПодробнее: {article}"
         if text:
             message += f"\n\n#{tag}"
-        params = {"owner_id": f"-{VK_GROUP_ID}", "from_group": 1, "message": message}
-        # загрузка фото ключом сообщества не работает (ВК не показывает картинку),
-        # поэтому картинку даёт превью ссылки: сайт производителя, иначе исходная статья
-        if link or article:
-            params["attachments"] = link[1] if link else article
-        vk_api("wall.post", **params)
+        vk_api("wall.post", owner_id=f"-{VK_GROUP_ID}", from_group=1, message=message)
         log("[+] VK: опубликовано")
     except Exception as e:
         log(f"[!] VK: не удалось опубликовать ({e})")
