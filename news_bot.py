@@ -57,6 +57,14 @@ def log(*args):
     print(*args, flush=True)
 
 
+PROBLEMS = []  # серьёзные проблемы запуска: если есть, запуск помечается неудачным и GitHub пишет на почту
+
+
+def problem(text):
+    PROBLEMS.append(text)
+    log(f"[!!] ПРОБЛЕМА: {text}")
+
+
 # ---------- Состояние ----------
 def load_state():
     if os.path.exists(STATE_FILE):
@@ -67,6 +75,7 @@ def load_state():
     state.setdefault("seen", {})    # url -> время, когда увидели
     state.setdefault("posted", [])  # [{title, text, source, ts}]
     state.setdefault("fails", {})   # url -> сколько раз не удалось обработать
+    state.setdefault("health", {"feeds": {}, "gemini": 0})  # счётчики сбоев подряд
     return state
 
 
@@ -109,6 +118,7 @@ def merge_state(a, b):
     for u, n in a.get("fails", {}).items():
         fails[u] = max(n, fails.get(u, 0))
     return {"seen": seen, "posted": posted, "fails": fails,
+            "health": a.get("health") or b.get("health") or {"feeds": {}, "gemini": 0},
             "last_post_ts": max(a.get("last_post_ts", 0), b.get("last_post_ts", 0))}
 
 
@@ -259,7 +269,12 @@ def collect_candidates(state):
             feed = feedparser.parse(raw)
         except Exception as e:
             log(f"[!] Лента недоступна: {feed_url} — {e}")
+            n = state["health"]["feeds"].get(feed_url, 0) + 1
+            state["health"]["feeds"][feed_url] = n
+            if n == 3 or n % 16 == 0:  # 3 запуска подряд, дальше раз в сутки
+                problem(f"источник не отвечает {n} запусков подряд: {feed_url} ({e})")
             continue
+        state["health"]["feeds"].pop(feed_url, None)
         source = feed.feed.get("title") or urlsplit(feed_url).netloc
         count = 0
         for entry in feed.entries:
@@ -623,7 +638,7 @@ def publish_vk(title, body, image, link=None, article=None):
         vk_api("wall.post", owner_id=f"-{VK_GROUP_ID}", from_group=1, message=message)
         log("[+] VK: опубликовано")
     except Exception as e:
-        log(f"[!] VK: не удалось опубликовать ({e})")
+        problem(f"ВКонтакте не принял пост «{title}»: {e}")
 
 
 # ---------- Запуск ----------
@@ -644,8 +659,12 @@ def main():
         selected = select_unique(candidates, state)
     except Exception as e:
         log(f"[!] Gemini недоступен, попробую в следующий запуск: {e}")
+        state["health"]["gemini"] = state["health"].get("gemini", 0) + 1
+        if state["health"]["gemini"] >= 3:
+            problem(f"Gemini не отвечает {state['health']['gemini']} запусков подряд: {e}")
         push_state(state)
         return
+    state["health"]["gemini"] = 0
 
     # вторая проверка дублей — в коде, по ключевым названиям
     known = posted_tokens(state)
@@ -708,6 +727,7 @@ def main():
             log(f"[!] Ошибка со статьёй {c['link']} (попытка {fails} из {MAX_FAILS}): {e}")
             if fails >= MAX_FAILS:
                 state["seen"][c["url"]] = NOW.isoformat()  # больше не пробуем
+                problem(f"не удалось опубликовать статью после {MAX_FAILS} попыток: {c['title']} ({e})")
         push_state(state)
 
 
@@ -746,3 +766,8 @@ def vk_test():
 
 if __name__ == "__main__":
     vk_test() if "--vk-test" in sys.argv else main()
+    if PROBLEMS:
+        log("\n===== ИТОГ: есть проблемы =====")
+        for x in PROBLEMS:
+            log(" - " + x)
+        sys.exit(1)  # GitHub пометит запуск как неудачный и пришлёт письмо
