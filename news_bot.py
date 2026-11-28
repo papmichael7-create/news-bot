@@ -26,6 +26,7 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import feedparser
+import sitegen
 import requests
 import trafilatura
 
@@ -166,6 +167,11 @@ def push_state(state):
         git("reset", "-q", "--hard", "origin/main")
         save_state(state)
         git("add", STATE_FILE)
+        try:  # сайт-архив новостей (GitHub Pages, папка docs)
+            if sitegen.build_site(state["posted"]):
+                git("add", "docs")
+        except Exception as e:
+            log(f"[!] Сайт не обновился: {e}")
         if git("diff", "--cached", "--quiet").returncode == 0:
             return
         git("commit", "-q", "-m", "update state")
@@ -834,6 +840,7 @@ def main():
             log(f"[+] Опубликовано: {title}  ({c['source']})")
             state["posted"].append({"title": title, "text": body, "orig": c["title"], "image": image,
                                     "source": c["source"], "tg_id": tg_id,
+                                    "url": c["link"], "plink": list(link) if link else None,
                                     "ts": datetime.now(timezone.utc).isoformat()})
             state["seen"][c["url"]] = NOW.isoformat()
             note_domains(state, links, c["source"])
@@ -1108,6 +1115,10 @@ def vk_test():
 if __name__ == "__main__":
     if "--vk-test" in sys.argv:
         vk_test()
+    elif "--site" in sys.argv:  # только пересобрать сайт
+        st = load_state()
+        sync_state(st)
+        push_state(st)
     else:
         main()
         extras()
