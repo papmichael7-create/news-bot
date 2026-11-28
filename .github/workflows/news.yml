@@ -1,6 +1,6 @@
 name: News bot
 
-# Запускает бота cron-job.org (каждые 1,5 часа) или кнопка Run workflow.
+# Запускает бота cron-job.org (каждые 3 часа) или кнопка Run workflow.
 on:
   workflow_dispatch:
     inputs:
@@ -19,7 +19,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
 
