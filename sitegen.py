@@ -15,6 +15,7 @@ SITE_URL = os.environ.get("SITE_URL", "https://papmichael7-create.github.io/news
 DOCS = "docs"
 ARCHIVE = os.path.join(DOCS, "archive.json")
 MAX_ITEMS = 3000
+SITE_VERSION = "2"  # при изменении дизайна сайт пересоберётся сам
 MSK = timezone(timedelta(hours=3))
 TG = "https://t.me/newsfrom1AC"
 VK = "https://vk.com/newsfrom1ac"
@@ -22,22 +23,28 @@ MONTHS = ["января", "февраля", "марта", "апреля", "ма�
           "сентября", "октября", "ноября", "декабря"]
 
 CSS = """
-*{box-sizing:border-box}body{margin:0;background:#F1F0EB;color:#141416;
+:root{--bg:#F1F0EB;--fg:#141416;--muted:#55554f;--meta:#77766f;--line:#d8d6cd;--tape:#141416;--tapefg:#F4F3EE;--ph:#e4e2da}
+[data-theme=dark]{--bg:#141416;--fg:#ECEBE6;--muted:#b3b2aa;--meta:#8f8e86;--line:#2e2e33;--tape:#F1F0EB;--tapefg:#141416;--ph:#232327}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141416;--fg:#ECEBE6;--muted:#b3b2aa;
+--meta:#8f8e86;--line:#2e2e33;--tape:#F1F0EB;--tapefg:#141416;--ph:#232327}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);transition:background .2s,color .2s;
 font:17px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-a{color:#141416}.wrap{max-width:760px;margin:0 auto;padding:0 18px}
-header{padding:34px 0 18px}.tape{display:inline-flex;align-items:center;gap:16px;background:#141416;
-color:#F4F3EE;padding:14px 30px 14px 24px;transform:rotate(-2deg);text-decoration:none;
+a{color:var(--fg)}.wrap{max-width:760px;margin:0 auto;padding:0 18px}
+header{padding:34px 0 18px;position:relative}.tape{display:inline-flex;align-items:center;gap:16px;background:var(--tape);
+color:var(--tapefg);padding:14px 30px 14px 24px;transform:rotate(-2deg);text-decoration:none;
 clip-path:polygon(0 0,100% 0,98.5% 20%,100% 40%,98.5% 60%,100% 80%,98.5% 100%,0 100%,1.5% 80%,0 60%,1.5% 40%,0 20%)}
 .dot{width:22px;height:22px;border-radius:50%;background:#E5392B;flex:none}
 .tape small{display:block;font:700 12px "Courier New",monospace;letter-spacing:5px}
 .tape b{display:block;font:900 40px/1 "Arial Black",Arial,sans-serif}
-.sub{margin:22px 0 0;color:#55554f;font-size:15px}.nav{margin:10px 0 0;font-size:15px}
+.theme{position:absolute;top:34px;right:0;border:1px solid var(--line);background:none;color:var(--fg);
+border-radius:20px;padding:6px 12px;font-size:16px;cursor:pointer}
+.sub{margin:22px 0 0;color:var(--muted);font-size:15px}.nav{margin:10px 0 0;font-size:15px}
 .nav a{margin-right:14px}h1.page{font-size:22px;margin:26px 0 6px}
-article{border-top:1px solid #d8d6cd;padding:22px 0}article img{width:100%;max-height:420px;
-object-fit:cover;border-radius:6px;background:#e4e2da}article h2{font-size:21px;line-height:1.3;margin:12px 0 8px}
-.meta{font:13px "Courier New",monospace;color:#77766f}.tags a{font:14px "Courier New",monospace;
-margin-right:10px;text-decoration:none;color:#55554f}.tags a:hover{color:#E5392B}
-.src{font-size:14px}footer{border-top:1px solid #d8d6cd;margin:30px 0;padding:18px 0;color:#77766f;font-size:13px}
+article{border-top:1px solid var(--line);padding:22px 0}article img{width:100%;max-height:420px;
+object-fit:cover;border-radius:6px;background:var(--ph)}article h2{font-size:21px;line-height:1.3;margin:12px 0 8px}
+.meta{font:13px "Courier New",monospace;color:var(--meta)}.tags a{font:14px "Courier New",monospace;
+margin-right:10px;text-decoration:none;color:var(--muted)}.tags a:hover{color:#E5392B}
+.src{font-size:14px}footer{border-top:1px solid var(--line);margin:30px 0;padding:18px 0;color:var(--meta);font-size:13px}
 """
 
 
@@ -98,15 +105,22 @@ def _page(title, desc, items, depth="", heading=""):
 <meta property="og:description" content="{html.escape(desc, quote=True)}">
 <meta property="og:type" content="website">
 <link rel="alternate" type="application/rss+xml" title="News from 1AC" href="{SITE_URL}/feed.xml">
-<style>{CSS}</style></head><body><div class="wrap">
-<header><a class="tape" href="{depth}index.html"><span class="dot"></span><span><small>NEWS FROM</small><b>1AC</b></span></a>
+<style>{CSS}</style>
+<script>try{{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}}catch(e){{}}</script>
+</head><body><div class="wrap">
+<header><button class="theme" type="button" aria-label="Дневной или ночной режим" onclick="toggleTheme()">☾ / ☀</button>
+<a class="tape" href="{depth}index.html"><span class="dot"></span><span><small>NEWS FROM</small><b>1AC</b></span></a>
 <p class="sub">Новости кинотехники для камерного цеха: камеры, оптика, свет, звук, грип, выставки и опыт операторов.</p>
 <p class="nav"><a href="{TG}">Telegram</a><a href="{VK}">ВКонтакте</a><a href="{depth}tags.html">Все теги</a></p></header>
 {f'<h1 class="page">{html.escape(heading)}</h1>' if heading else ''}
 {arts}
 <footer>Новости собираются и переводятся автоматически — сверяйте детали с источником.
 Права на изображения принадлежат их владельцам; по вопросам удаления пишите в <a href="{TG}">Telegram-канал</a>.</footer>
-</div></body></html>"""
+</div>
+<script>function toggleTheme(){{var d=document.documentElement,cur=d.dataset.theme||
+(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"),n=cur==="dark"?"light":"dark";
+d.dataset.theme=n;try{{localStorage.setItem("theme",n)}}catch(e){{}}}}</script>
+</body></html>"""
 
 
 def _write(path, content):
@@ -126,7 +140,12 @@ def build_site(posted):
                             ("title", "text", "orig", "source", "ts", "image", "url", "plink", "tg_id")})
             known.add(_key(p))
             added += 1
-    if not added and os.path.exists(os.path.join(DOCS, "index.html")):
+    ver_file = os.path.join(DOCS, ".version")
+    try:
+        same_ver = open(ver_file, encoding="utf-8").read().strip() == SITE_VERSION
+    except Exception:
+        same_ver = False
+    if not added and same_ver and os.path.exists(os.path.join(DOCS, "index.html")):
         return False
     archive.sort(key=lambda p: p["ts"], reverse=True)
     archive = archive[:MAX_ITEMS]
@@ -167,4 +186,5 @@ def build_site(posted):
            + "".join(f"<url><loc>{u}</loc></url>" for u in urls) + "</urlset>")
     _write(os.path.join(DOCS, "robots.txt"), f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
     _write(os.path.join(DOCS, ".nojekyll"), "")
+    _write(ver_file, SITE_VERSION)
     return True
