@@ -32,6 +32,8 @@ import trafilatura
 BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 CHANNEL = os.environ.get("TELEGRAM_CHANNEL", "@newsfrom1AC")
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "")
+VK_TOKEN = os.environ.get("VK_TOKEN", "")                      # ключ сообщества ВКонтакте
+VK_GROUP_ID = os.environ.get("VK_GROUP_ID", "243786644")       # группа vk.com/club243786644
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-lite-latest")
 GEMINI_FALLBACK_MODEL = os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash-lite")
 GEMINI_MODELS = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL, "gemini-flash-latest"]
@@ -571,6 +573,57 @@ def publish(title, body, image, link=None):
                        "link_preview_options": {"is_disabled": True}})
 
 
+# ---------- Шаг 6: копия поста во ВКонтакте ----------
+def vk_api(method, **params):
+    params.update(access_token=VK_TOKEN, v="5.199")
+    data = requests.post(f"https://api.vk.com/method/{method}", data=params, timeout=60).json()
+    if "error" in data:
+        e = data["error"]
+        raise RuntimeError(f"VK {method}: {e.get('error_code')} {e.get('error_msg')}")
+    return data["response"]
+
+
+def vk_photo(image):
+    """Загружает картинку в группу, возвращает вложение photo... или None."""
+    if not image:
+        return None
+    try:
+        content = http_get(image).content
+        server = vk_api("photos.getWallUploadServer", group_id=VK_GROUP_ID)
+        up = requests.post(server["upload_url"],
+                           files={"photo": ("image.jpg", content, "image/jpeg")}, timeout=60).json()
+        saved = vk_api("photos.saveWallPhoto", group_id=VK_GROUP_ID, photo=up["photo"],
+                       server=up["server"], hash=up["hash"])[0]
+        return f"photo{saved['owner_id']}_{saved['id']}"
+    except Exception as e:
+        log(f"[!] VK: картинка не загрузилась ({e})")
+        return None
+
+
+def publish_vk(title, body, image, link=None):
+    """Дублирует пост в группу ВКонтакте. Ошибки ВК не мешают Telegram."""
+    if not VK_TOKEN:
+        return
+    try:
+        text, _, tag = body.rpartition("\n\n#")
+        message = f"{title}\n\n{text or body}"
+        if link:
+            message += f"\n\n{link[0]}: {link[1]}"
+        message += "\n\nБольше новостей в Telegram: t.me/newsfrom1AC"
+        if text:
+            message += f"\n\n#{tag}"
+        params = {"owner_id": f"-{VK_GROUP_ID}", "from_group": 1, "message": message}
+        photo = vk_photo(image)
+        if photo:
+            params["attachments"] = photo
+        elif link:
+            params["attachments"] = link[1]  # превью сайта производителя вместо картинки
+        vk_api("wall.post", **params)
+        log("[+] VK: опубликовано")
+    except Exception as e:
+        log(f"[!] VK: не удалось опубликовать ({e})")
+
+
 # ---------- Запуск ----------
 def main():
     if not BOT_TOKEN or not GEMINI_KEY:
@@ -640,9 +693,10 @@ def main():
                 push_state(state)
                 continue
             publish(title, body, image, link)
+            publish_vk(title, body, image, link)
             state["last_post_ts"] = time.time()
             log(f"[+] Опубликовано: {title}  ({c['source']})")
-            state["posted"].append({"title": title, "text": body, "orig": c["title"],
+            state["posted"].append({"title": title, "text": body, "orig": c["title"], "image": image,
                                     "source": c["source"],
                                     "ts": datetime.now(timezone.utc).isoformat()})
             state["seen"][c["url"]] = NOW.isoformat()
@@ -655,5 +709,13 @@ def main():
         push_state(state)
 
 
+def vk_test():
+    """Проверка ВКонтакте: повторяет последний пост канала в группе."""
+    state = load_state()
+    last = state["posted"][-1] if state["posted"] else {"title": "Проверка", "text": "Тестовый пост."}
+    log(f"VK-тест: {last['title']}")
+    publish_vk(last["title"], last["text"], last.get("image"))
+
+
 if __name__ == "__main__":
-    main()
+    vk_test() if "--vk-test" in sys.argv else main()
