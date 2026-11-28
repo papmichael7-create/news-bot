@@ -40,10 +40,10 @@ GEMINI_MODELS = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL, "gemini-flash-latest"]
 MAX_FAILS = 3  # сколько раз пробовать статью, если Gemini недоступен
 
 MAX_AGE_HOURS = int(os.environ.get("MAX_AGE_HOURS", "36"))       # статьи старше не берём
-MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "5"))  # постов за один запуск
+MAX_POSTS_PER_RUN = int(os.environ.get("MAX_POSTS_PER_RUN", "8"))  # постов за один запуск
 HISTORY_DAYS = int(os.environ.get("HISTORY_DAYS", "5"))           # сколько дней помнить темы
 POST_INTERVAL_SEC = int(os.environ.get("POST_INTERVAL_SEC", "300"))  # минимальная пауза между постами (5 минут)
-SPREAD_WINDOW_SEC = int(os.environ.get("SPREAD_WINDOW_SEC", "4800"))  # растягиваем посты запуска на ~80 минут
+SPREAD_WINDOW_SEC = int(os.environ.get("SPREAD_WINDOW_SEC", "9600"))  # растягиваем посты запуска на ~160 минут
 
 SOURCES_FILE = "sources.txt"
 STATE_FILE = "state.json"
@@ -777,7 +777,7 @@ def main():
             state["seen"][c["url"]] = NOW.isoformat()
     push_state(state)
 
-    # равномерно распределяем посты по интервалу до следующего запуска (1,5 часа)
+    # равномерно распределяем посты по интервалу до следующего запуска (3 часа)
     spacing = POST_INTERVAL_SEC
     if len(to_post) > 1:
         spacing = max(POST_INTERVAL_SEC, SPREAD_WINDOW_SEC // len(to_post))
