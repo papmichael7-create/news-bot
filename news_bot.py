@@ -614,15 +614,13 @@ def publish_vk(title, body, image, link=None):
         message = f"{title}\n\n{text or body}"
         if link:
             message += f"\n\n{link[0]}: {link[1]}"
-        message += "\n\nБольше новостей в Telegram: t.me/newsfrom1AC"
         if text:
             message += f"\n\n#{tag}"
         params = {"owner_id": f"-{VK_GROUP_ID}", "from_group": 1, "message": message}
-        photo = vk_photo(image)
-        if photo:
-            params["attachments"] = photo
-        elif link:
-            params["attachments"] = link[1]  # превью сайта производителя вместо картинки
+        # загрузка фото ключом сообщества не работает (ВК не показывает картинку),
+        # поэтому картинку даёт превью ссылки на сайт производителя
+        if link:
+            params["attachments"] = link[1]
         vk_api("wall.post", **params)
         log("[+] VK: опубликовано")
     except Exception as e:
