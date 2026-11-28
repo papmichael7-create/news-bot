@@ -713,6 +713,11 @@ def vk_test():
     """Проверка ВКонтакте: повторяет последний пост канала в группе."""
     state = load_state()
     last = state["posted"][-1] if state["posted"] else {"title": "Проверка", "text": "Тестовый пост."}
+    if not last.get("image"):
+        # у старых постов картинка не сохранена — проверяем только загрузку фото, без поста
+        test_img = "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg"
+        log(f"VK-тест загрузки фото: {vk_photo(test_img)}")
+        return
     log(f"VK-тест: {last['title']}")
     publish_vk(last["title"], last["text"], last.get("image"))
 
