@@ -167,8 +167,10 @@ def push_state(state):
         git("reset", "-q", "--hard", "origin/main")
         save_state(state)
         git("add", STATE_FILE)
+        new_pages = []
         try:  # сайт-архив новостей (GitHub Pages, папка docs)
-            if sitegen.build_site(state["posted"]):
+            new_pages = sitegen.build_site(state["posted"])
+            if new_pages:
                 git("add", "docs")
         except Exception as e:
             log(f"[!] Сайт не обновился: {e}")
@@ -176,6 +178,7 @@ def push_state(state):
             return
         git("commit", "-q", "-m", "update state")
         if git("push", "-q", "origin", "HEAD:main").returncode == 0:
+            sitegen.indexnow([u for u in new_pages if "/n/" in u])  # сообщаем поисковикам
             return
         time.sleep(3)
     log("[!] Не удалось сохранить память в репозиторий")
