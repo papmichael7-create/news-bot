@@ -512,6 +512,12 @@ POST_PROMPT = """Ты редактор русскоязычного Telegram-к�
   (ПО — программы, плагины, прошивки, видеоплатформы и сервисы;
   опыт — операторы и съёмочные группы делятся опытом, как снимали фильмы и сериалы;
   индустрия — бизнес-новости компаний, сделки, финансовые результаты.)
+- "tag2": о чём конкретно, одно слово или название без пробелов:
+  если новость о продукте или компании — бренд/компания (Sekonic, ARRI, Sony, Blackmagic, DJI);
+  если это опыт съёмок — тип проекта: фильм, сериал, реклама, клип, документалка;
+  если выставка — название выставки (NAB, IBC, CineGear, CPS);
+  иначе — самое точное ключевое слово новости.
+- "tag3": сфера, строго одно слово из списка: кино, видео, фото, звук.
 
 - "link": если новость о конкретном продукте (камера, объектив, свет, программа,
   обновление, прошивка, аксессуар и т.п.) — ссылка на страницу этого продукта
@@ -522,7 +528,7 @@ POST_PROMPT = """Ты редактор русскоязычного Telegram-к�
   так, как оно написано в твоём "text" (например "DaVinci Resolve 20" или "Aputure STORM 1200x").
   Если "link" пустая — тоже пустая строка.
 
-Верни JSON: {{"title": "...", "text": "...", "tag": "...", "link": "...", "link_text": "..."}}
+Верни JSON: {{"title": "...", "text": "...", "tag": "...", "tag2": "...", "tag3": "...", "link": "...", "link_text": "..."}}
 
 Источник: {source}
 Адрес статьи: {url}
@@ -615,6 +621,8 @@ def fact_check(title, body, article, orig):
     raise FactCheckError(f"цифры не подтверждаются статьёй: {bad}")
 
 
+SPHERES = {"кино", "видео", "фото", "звук"}
+
 TAGS = {t.lower(): t for t in """камеры оптика свет ПО звук мониторы грип стабилизаторы дроны
 аккумуляторы накопители аксессуары сумки выставки опыт индустрия""".split()}
 
@@ -635,6 +643,14 @@ def make_post(c, text, links):
     if tag.lower() not in TAGS:
         tag = "индустрия"
     tag = TAGS[tag.lower()]
+    tag2 = re.sub(r"[^\wА-Яа-яЁё]", "", (result.get("tag2") or "").strip().lstrip("#"))[:30]
+    tag3 = re.sub(r"[^\wА-Яа-яЁё]", "", (result.get("tag3") or "").strip().lstrip("#")).lower()
+    if tag3 not in SPHERES:
+        tag3 = "кино"
+    tags = []
+    for t in (tag, tag2, tag3):  # три хэштега без повторов
+        if t and t.lower() not in [x.lower() for x in tags]:
+            tags.append(t)
     link = None
     url = (result.get("link") or "").strip()
     anchor = (result.get("link_text") or "").strip()
@@ -642,7 +658,7 @@ def make_post(c, text, links):
         link = (anchor, url)
     elif url or anchor:
         log(f"[~] Ссылку не вставляю (нет в статье или в тексте): {anchor!r} {url}")
-    return title, body + f"\n\n#{tag}", link
+    return title, body + "\n\n" + " ".join(f"#{t}" for t in tags), link
 
 
 # ---------- Шаг 5: Telegram ----------
